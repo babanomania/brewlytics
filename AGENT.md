@@ -9,7 +9,7 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
 ## Core Components
 
 -### 1. Microservices (FastAPI)
--Directories:
+Directories (under `backend-api/`):
   - `order-api/`
   - `product-api/`
   - `customer-api/`
