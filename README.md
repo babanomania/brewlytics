@@ -88,6 +88,8 @@ cp .env.sample .env
 ```bash
 docker-compose up --build
 ```
+The Postgres and Metabase containers store their data in named volumes, so your
+databases survive `docker-compose down`.
 
 * API Gateway: `http://localhost:8000`
 * Airflow: `http://localhost:8080`
