@@ -27,8 +27,7 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
 - CDC implementation:
   - Trigger on `orders` inserts into `cdc_orders`
   - `cdc_orders` acts as a WAL-like journal for Airflow
-- Uses raw SQL via `init.sql`
-- Future enhancement: replace `init.sql` with Flyway migrations
+- Managed with Flyway migrations in `migrations/`
 
 ---
 
@@ -46,7 +45,7 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
   - `fact_sales`
   - Dimensions: `dim_customer`, `dim_product`, `dim_employee`, `dim_date`, `dim_store`
 - Seeded with sample data for demo use
-- Future enhancement: manage with Flyway and optionally dbt
+- Managed with Flyway migrations (optionally dbt later)
 
 ---
 
@@ -90,7 +89,7 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
 
 ## Future Enhancements
 
-- [ ] Replace raw SQL with **Flyway** for both OLTP and OLAP schema migrations
+- [x] Replace raw SQL with **Flyway** for both OLTP and OLAP schema migrations
 - [ ] Add **`cdc_offset`** table for precise incremental CDC checkpointing
 - [ ] Implement **support for `UPDATE` and `DELETE`** CDC events
 - [ ] Expand **K6 test coverage** to simulate more realistic customer behavior

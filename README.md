@@ -62,6 +62,7 @@ docker-compose up --build
 * API: `http://localhost:8000`
 * Airflow: `http://localhost:8080`
 * Metabase: `http://localhost:3000`
+* Flyway runs automatically to provision both databases
 
 If everything works, pat yourself on the back. If not, blame YAML.
 
@@ -113,8 +114,8 @@ Connect Metabase to the OLAP PostgreSQL database.
 ```
 .
 ├── backend-api/         # FastAPI or Express codebase
-├── postgres-oltp/       # OLTP schema init script
-├── postgres-olap/       # OLAP star schema init script
+├── postgres-oltp/       # OLTP Flyway migrations
+├── postgres-olap/       # OLAP Flyway migrations
 ├── airflow-pipeline/    # Airflow DAGs and config
 ├── k6-loadtest/         # K6 performance testing scripts
 ├── metabase/            # BI frontend (auto-configured)
