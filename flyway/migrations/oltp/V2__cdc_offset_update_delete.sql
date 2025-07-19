@@ -5,9 +5,6 @@ CREATE TABLE IF NOT EXISTS cdc_offset (
     table_name TEXT PRIMARY KEY,
     last_id INTEGER DEFAULT 0
 );
-INSERT INTO cdc_offset(table_name, last_id)
-    VALUES ('cdc_orders', 0)
-ON CONFLICT (table_name) DO NOTHING;
 
 -- extend cdc_orders with operation and table name
 ALTER TABLE cdc_orders ADD COLUMN IF NOT EXISTS op TEXT DEFAULT 'INSERT';
