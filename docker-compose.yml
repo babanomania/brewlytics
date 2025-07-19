@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: ${OLTP_DB}
     ports:
       - "5432:5432"
+    volumes:
+      - oltp-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -51,6 +53,8 @@ services:
       POSTGRES_DB: ${OLAP_DB}
     ports:
       - "5433:5432"
+    volumes:
+      - olap-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -159,6 +163,8 @@ services:
       MB_DB_PASS: ${DB_PASSWORD}
     ports:
       - "3000:3000"
+    volumes:
+      - metabase-data:/metabase-data
     depends_on:
       - flyway-olap
 
@@ -174,4 +180,9 @@ services:
         condition: service_healthy
       olap-db:
         condition: service_healthy
+
+volumes:
+  oltp-data:
+  olap-data:
+  metabase-data:
 
