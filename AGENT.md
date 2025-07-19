@@ -2,65 +2,115 @@
 
 ## Goal
 
-Simulate a real-time coffee shop analytics stack. Users place orders via an API, data is inserted into an OLTP PostgreSQL database with CDC logging. Airflow picks up changes and replicates them into an OLAP PostgreSQL star schema. Metabase visualizes the data. K6 simulates user load.
+Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users place orders via a REST API, which inserts into an OLTP PostgreSQL database. A custom CDC mechanism logs changes into a `cdc_orders` table. Airflow DAGs extract and transform this data into a star schema in an OLAP PostgreSQL instance. Metabase provides business-friendly dashboards, while K6 simulates real-time load on the API.
 
-## Components
+---
+
+## Core Components
 
 ### 1. `backend-api/` (FastAPI)
-- Exposes REST endpoints:
+- Provides REST endpoints:
   - `POST /orders`
   - `POST /products`
   - `POST /customers`
-- Writes to OLTP database (`coffee_oltp`)
-- Triggers write to `cdc_orders` table
+- Uses PostgreSQL client (`psycopg2`)
+- On order creation, inserts into `orders` and `order_items`, and logs a JSONB payload to `cdc_orders`
+- Containerized with Uvicorn in Docker
+- Dummy data generation is pending
+- Future enhancement: break into microservices (order, customer, product)
+
+---
 
 ### 2. `postgres-oltp/`
-- Normalized schema:
-  - `orders`, `order_items`, `products`, `customers`, `employees`
-  - `cdc_orders` logs inserts (and optionally updates)
+- Standard normalized schema includes:
+  - `orders`, `order_items`, `products`, `customers`, `employees`, `stores`
+- CDC implementation:
+  - Trigger on `orders` inserts into `cdc_orders`
+  - `cdc_orders` acts as a WAL-like journal for Airflow
+- Uses raw SQL via `init.sql`
+- Future enhancement: replace `init.sql` with Flyway migrations
+
+---
 
 ### 3. `airflow-pipeline/`
-- DAG reads from `cdc_orders`
-- Transforms JSON payload into `fact_sales`
-- Loads into OLAP DB (`coffee_olap`)
-- Located in `dags/cdc_to_star.py`
+- Airflow DAG `cdc_to_star.py` polls `cdc_orders` for new entries
+- Transforms payloads into fact and dimension entries
+- Loads data into `fact_sales` and maintains idempotency (no duplicate inserts)
+- Supports join enrichment with `products`, `customers`, etc.
+- Potential enhancement: add `cdc_offset` table for checkpoint tracking across multiple tables
+
+---
 
 ### 4. `postgres-olap/`
-- Star schema:
-  - `fact_sales`, `dim_customer`, `dim_product`, `dim_employee`, `dim_date`
-- Ingested by Airflow
+- Implements a simplified star schema:
+  - `fact_sales`
+  - Dimensions: `dim_customer`, `dim_product`, `dim_employee`, `dim_date`, `dim_store`
+- Seeded with sample data for demo use
+- Future enhancement: manage with Flyway and optionally dbt
+
+---
 
 ### 5. `k6-loadtest/`
-- K6 script targets `POST /orders`
-- Simulates 10–100 VUs
-- Used to populate OLTP with test data
+- Load test script hits `POST /orders`
+- Uses randomized payloads with predefined customers/products
+- Simulates 10–100 concurrent users
+- Future improvement: expand to occasionally create new customers/products mid-test
+
+---
 
 ### 6. `metabase/`
-- Visualizes OLAP schema
-- Sample dashboards: revenue by day, sales by category, top customers
+- Connects to `coffee_olap` (OLAP DB)
+- Dashboards are user-configurable
+- Current focus: revenue by day, sales by category, top customers
+- Future enhancement: include default dashboards and visual templates
 
-## Shared Services
+---
 
-### PostgreSQL Instances:
-- `coffee_oltp`: for transactional writes and CDC
-- `coffee_olap`: for analytical reads
+## Shared Infrastructure
 
-## Dev Environment
+### Databases
+- **OLTP**: `coffee_oltp` (transactional writes, normalized)
+- **OLAP**: `coffee_olap` (analytics, star schema)
 
-- All services run via Docker Compose
-- Each component should auto-initialize on `docker-compose up`
-- Environment variables defined in `.env` or inside `docker-compose.yml`
+### Orchestration
+- Managed via `docker-compose.yml`
+- All services are stateless
+- Secrets and ports are defined via `.env` (plan to extract from Compose into `.env.sample`)
 
-## Coding Conventions
+---
 
-- All services must be stateless
-- Timestamps in UTC
-- CDC payloads are `JSONB`
-- Airflow DAGs must be idempotent (no duplicate loads)
+## Conventions and Best Practices
 
-## Suggested Enhancements
+- UTC timestamps across all services
+- CDC events use `JSONB` payloads
+- Airflow DAGs must be idempotent and support eventual consistency
+- All services communicate via internal Docker network
 
-- Add `cdc_offset` tracking table to avoid missing records
-- Add monitoring dashboard for DAG success/failure counts
-- Add dbt transformations post-load into `fact_sales`
+---
 
+## Future Enhancements
+
+- [ ] Replace raw SQL with **Flyway** for both OLTP and OLAP schema migrations
+- [ ] Add **`cdc_offset`** table for precise incremental CDC checkpointing
+- [ ] Implement **support for `UPDATE` and `DELETE`** CDC events
+- [ ] Expand **K6 test coverage** to simulate more realistic customer behavior
+- [ ] Introduce **dbt** for OLAP transformations and post-load validation
+- [ ] Refactor backend into modular **microservices** with isolated data ownership
+- [ ] Scale services in Docker Compose (e.g., `order-api` with 3 replicas)
+
+---
+
+## Developer Workflow Summary
+
+1. Launch the stack:
+   ```bash
+   docker-compose up --build
+````
+
+2. Use `/orders` API to generate transactions (or run K6 test)
+3. Watch Airflow DAG process CDC into `fact_sales`
+4. Open Metabase and view analytical dashboards
+
+---
+
+This file is intended to help Codex, developers, and collaborators understand the architecture, responsibilities, and goals of each component. Follow the `TODO.md` to scaffold or extend the project incrementally.
