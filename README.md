@@ -33,6 +33,8 @@ Whether you're brewing orders, piping SQL, or stirring Airflow DAGs, Brewlytics 
 | OLTP DB           | PostgreSQL        |
 | ETL Orchestration | Apache Airflow    |
 | OLAP Warehouse    | PostgreSQL        |
+| Schema Migrations | Flyway            |
+| Data Transformations | dbt            |
 | Load Testing      | K6                |
 | BI Dashboard      | Metabase          |
 | Containerization  | Docker Compose    |
@@ -134,8 +136,8 @@ Connect Metabase to the OLAP PostgreSQL database.
 ```
 .
 ├── backend-api/         # FastAPI or Express codebase
-├── postgres-oltp/       # OLTP Flyway migrations
-├── postgres-olap/       # OLAP Flyway migrations
+├── flyway/migrations/oltp/  # OLTP Flyway migrations
+├── flyway/migrations/olap/  # OLAP Flyway migrations
 ├── airflow-pipeline/    # Airflow DAGs and config
 ├── k6-loadtest/         # K6 performance testing scripts
 ├── metabase/            # BI frontend (auto-configured)
