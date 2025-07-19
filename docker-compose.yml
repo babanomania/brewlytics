@@ -2,10 +2,11 @@ version: '3.9'
 services:
   oltp-db:
     image: postgres:14
+    env_file: .env
     environment:
-      POSTGRES_USER: brew
-      POSTGRES_PASSWORD: brew
-      POSTGRES_DB: coffee_oltp
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${OLTP_DB}
     ports:
       - "5432:5432"
 
@@ -14,10 +15,11 @@ services:
     command: -connectRetries=60 migrate
     volumes:
       - ./flyway/migrations/oltp:/flyway/sql
+    env_file: .env
     environment:
-      FLYWAY_URL: jdbc:postgresql://oltp-db:5432/coffee_oltp
-      FLYWAY_USER: brew
-      FLYWAY_PASSWORD: brew
+      FLYWAY_URL: jdbc:postgresql://${OLTP_HOST}:${OLTP_PORT}/${OLTP_DB}
+      FLYWAY_USER: ${DB_USER}
+      FLYWAY_PASSWORD: ${DB_PASSWORD}
     depends_on:
       - oltp-db
 
@@ -26,6 +28,7 @@ services:
     volumes:
       - ./dbt:/dbt
     working_dir: /dbt
+    env_file: .env
     environment:
       DBT_PROFILES_DIR: /dbt
       DBT_PROFILE: oltp
@@ -36,10 +39,11 @@ services:
 
   olap-db:
     image: postgres:14
+    env_file: .env
     environment:
-      POSTGRES_USER: brew
-      POSTGRES_PASSWORD: brew
-      POSTGRES_DB: coffee_olap
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${OLAP_DB}
     ports:
       - "5433:5432"
 
@@ -48,10 +52,11 @@ services:
     command: -connectRetries=60 migrate
     volumes:
       - ./flyway/migrations/olap:/flyway/sql
+    env_file: .env
     environment:
-      FLYWAY_URL: jdbc:postgresql://olap-db:5432/coffee_olap
-      FLYWAY_USER: brew
-      FLYWAY_PASSWORD: brew
+      FLYWAY_URL: jdbc:postgresql://${OLAP_HOST}:${OLAP_PORT}/${OLAP_DB}
+      FLYWAY_USER: ${DB_USER}
+      FLYWAY_PASSWORD: ${DB_PASSWORD}
     depends_on:
       - olap-db
 
@@ -60,6 +65,7 @@ services:
     volumes:
       - ./dbt:/dbt
     working_dir: /dbt
+    env_file: .env
     environment:
       DBT_PROFILES_DIR: /dbt
       DBT_PROFILE: olap
@@ -72,34 +78,37 @@ services:
     build: ./backend-api/order-api
     deploy:
       replicas: 3
+    env_file: .env
     environment:
-      OLTP_HOST: oltp-db
-      OLTP_PORT: 5432
-      OLTP_DB: coffee_oltp
-      OLTP_USER: brew
-      OLTP_PASSWORD: brew
+      OLTP_HOST: ${OLTP_HOST}
+      OLTP_PORT: ${OLTP_PORT}
+      OLTP_DB: ${OLTP_DB}
+      OLTP_USER: ${DB_USER}
+      OLTP_PASSWORD: ${DB_PASSWORD}
     depends_on:
       - flyway-oltp
 
   product-api:
     build: ./backend-api/product-api
+    env_file: .env
     environment:
-      OLTP_HOST: oltp-db
-      OLTP_PORT: 5432
-      OLTP_DB: coffee_oltp
-      OLTP_USER: brew
-      OLTP_PASSWORD: brew
+      OLTP_HOST: ${OLTP_HOST}
+      OLTP_PORT: ${OLTP_PORT}
+      OLTP_DB: ${OLTP_DB}
+      OLTP_USER: ${DB_USER}
+      OLTP_PASSWORD: ${DB_PASSWORD}
     depends_on:
       - flyway-oltp
 
   customer-api:
     build: ./backend-api/customer-api
+    env_file: .env
     environment:
-      OLTP_HOST: oltp-db
-      OLTP_PORT: 5432
-      OLTP_DB: coffee_oltp
-      OLTP_USER: brew
-      OLTP_PASSWORD: brew
+      OLTP_HOST: ${OLTP_HOST}
+      OLTP_PORT: ${OLTP_PORT}
+      OLTP_DB: ${OLTP_DB}
+      OLTP_USER: ${DB_USER}
+      OLTP_PASSWORD: ${DB_PASSWORD}
     depends_on:
       - flyway-oltp
 
@@ -128,13 +137,14 @@ services:
 
   metabase:
     image: metabase/metabase
+    env_file: .env
     environment:
       MB_DB_TYPE: postgres
-      MB_DB_DBNAME: metabase
-      MB_DB_PORT: 5432
-      MB_DB_HOST: olap-db
-      MB_DB_USER: brew
-      MB_DB_PASS: brew
+      MB_DB_DBNAME: ${MB_DB}
+      MB_DB_PORT: ${OLAP_PORT}
+      MB_DB_HOST: ${OLAP_HOST}
+      MB_DB_USER: ${DB_USER}
+      MB_DB_PASS: ${DB_PASSWORD}
     ports:
       - "3000:3000"
     depends_on:

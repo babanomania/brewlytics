@@ -124,10 +124,10 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 ---
 
-## 11. Additional Features
+-## 11. Additional Features
 
-- [ ] Secure `docker-compose.yml` by moving all passwords into `.env.sample`
-- [ ] Expand load testing with variations:
+- [x] Secure `docker-compose.yml` by moving all passwords into `.env.sample`
+- [x] Expand load testing with variations:
   - randomize customers and products
   - occasionally create new customers and products during tests
 - [x] Refactor backend into microservices for separate order, product, and customer APIs
