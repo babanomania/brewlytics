@@ -68,8 +68,10 @@ services:
     depends_on:
       - flyway-olap
 
-  api:
+  order-api:
     build: ./backend-api
+    deploy:
+      replicas: 3
     environment:
       OLTP_HOST: oltp-db
       OLTP_PORT: 5432
@@ -115,5 +117,5 @@ services:
       - ./k6-loadtest:/scripts
     entrypoint: "k6 run /scripts/loadtest.js"
     depends_on:
-      - api
+      - order-api
 

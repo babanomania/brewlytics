@@ -11,7 +11,7 @@ export let options = {
 };
 
 export default function () {
-  const url = 'http://api:8000/orders';
+  const url = 'http://order-api:8000/orders';
   const payload = JSON.stringify({
     customer_id: 1,
     items: [{ product_id: 1, quantity: 1 }],
