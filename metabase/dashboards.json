@@ -1,0 +1,19 @@
+{
+  "dashboards": [
+    {
+      "name": "Daily Revenue",
+      "description": "Sum of sales per day",
+      "collection": "Brewlytics"
+    },
+    {
+      "name": "Sales by Category",
+      "description": "Product sales aggregated by category",
+      "collection": "Brewlytics"
+    },
+    {
+      "name": "Top Customers",
+      "description": "Customers ranked by total spend",
+      "collection": "Brewlytics"
+    }
+  ]
+}
