@@ -98,6 +98,7 @@ services:
     working_dir: /dbt
     environment:
       DBT_PROFILES_DIR: /dbt
+      DBT_TARGET: oltp
     entrypoint: ["/bin/sh", "-c", "./seed.sh"]
     depends_on:
       - flyway-oltp
@@ -109,6 +110,7 @@ services:
     working_dir: /dbt
     environment:
       DBT_PROFILES_DIR: /dbt
+      DBT_TARGET: olap
     entrypoint: ["/bin/sh", "-c", "./run.sh"]
     depends_on:
       - flyway-olap

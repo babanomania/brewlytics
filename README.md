@@ -69,15 +69,14 @@ If everything works, pat yourself on the back. If not, blame YAML.
 ### Generate Sample Data
 
 Flyway provisions both databases automatically. To load additional sample
-customers and products without running the Python script, use dbt seeds:
+customers and products, use dbt seeds:
 
 ```bash
 docker-compose run dbt-seed
 ```
 
-This will insert a few extra records using the CSV files in the `dbt/seeds`
-folder. The original `backend-api/sample_data.py` script can still be used to
-generate random orders if desired.
+This inserts a few extra records into the OLTP database using the CSV files in
+the `dbt/seeds` folder.
 
 To run analytical transformations with dbt models:
 
