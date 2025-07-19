@@ -72,7 +72,7 @@ Flyway provisions both databases automatically. To load additional sample
 customers and products, use dbt seeds:
 
 ```bash
-docker-compose run dbt-seed
+docker-compose run dbt_oltp
 ```
 
 This inserts a few extra records into the OLTP database using the CSV files in
@@ -81,7 +81,7 @@ the `dbt/seeds` folder.
 To run analytical transformations with dbt models:
 
 ```bash
-docker-compose run dbt-run
+docker-compose run dbt_olap
 ```
 
 This populates helper tables like `daily_sales` in the OLAP database.

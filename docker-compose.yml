@@ -91,26 +91,28 @@ services:
     depends_on:
       - api
 
-  dbt-seed:
+  dbt_oltp:
     image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
     volumes:
       - ./dbt:/dbt
     working_dir: /dbt
     environment:
       DBT_PROFILES_DIR: /dbt
-      DBT_TARGET: oltp
-    entrypoint: ["/bin/sh", "-c", "./seed.sh"]
+      DBT_PROFILE: oltp
+      DBT_TARGET: dev
+    entrypoint: ["/bin/sh", "-c", "./dbt_oltp.sh"]
     depends_on:
       - flyway-oltp
 
-  dbt-run:
+  dbt_olap:
     image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
     volumes:
       - ./dbt:/dbt
     working_dir: /dbt
     environment:
       DBT_PROFILES_DIR: /dbt
-      DBT_TARGET: olap
-    entrypoint: ["/bin/sh", "-c", "./run.sh"]
+      DBT_PROFILE: olap
+      DBT_TARGET: dev
+    entrypoint: ["/bin/sh", "-c", "./dbt_olap.sh"]
     depends_on:
       - flyway-olap
