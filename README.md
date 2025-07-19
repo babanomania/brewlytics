@@ -96,15 +96,17 @@ K6 will bombard your API like a line of customers 2 minutes before closing.
 
 Use Metabase to visualize sales trends, best-selling items, and which employee is secretly upselling muffins.
 
-Connect Metabase to the OLAP PostgreSQL database. Sample dashboards include:
+Connect Metabase to the OLAP PostgreSQL database.
 
 1. Visit [Metabase](http://localhost:3000) and create an admin user.
 2. Add a new PostgreSQL database using host `olap-db`, port `5432`, user `brew`,
    password `brew`, and database `coffee_olap`.
-
-* Daily revenue breakdown
-* Most caffeinated customers
-* Sales by time of day (a.k.a. “When do people need coffee the most?”)
+3. (Optional) run `python metabase/setup_dashboards.py` to create example
+   dashboards automatically. The script creates a **Coffee Shop Overview**
+   dashboard with:
+   - Daily revenue
+   - Sales by product
+   - Top customers
 
 ## Folder Structure
 

@@ -90,7 +90,7 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 - [x] Ensure Metabase container connects to OLAP DB
 - [x] Document login steps
-- [ ] Optionally generate sample dashboards:
+- [x] Optionally generate sample dashboards:
   - Daily revenue
   - Sales by category
   - Top customers
