@@ -11,7 +11,7 @@ This folder contains a helper script to bootstrap example dashboards in Metabase
 3. Run the script:
 
 ```bash
-python metabase/dashboard_from_config.py
+python metabase/setup_dashboards.py
 ```
 
 The script reads the configuration from `dashboard.json` (or the path specified
