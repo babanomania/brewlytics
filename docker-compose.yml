@@ -162,6 +162,7 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
     volumes:
       - ./airflow-pipeline/dags:/opt/airflow/dags
+      - airflow-data:/opt/airflow
     command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com && airflow scheduler & airflow webserver"
     ports:
       - "8080:8080"
@@ -205,4 +206,4 @@ volumes:
   olap-data:
   metabase-data:
   metabase-db-data:
-
+  airflow-data:
