@@ -17,7 +17,7 @@ services:
       - ./flyway/migrations/oltp:/flyway/sql
     env_file: .env
     environment:
-      FLYWAY_URL: jdbc:postgresql://${OLTP_HOST}:${OLTP_PORT}/${OLTP_DB}
+      FLYWAY_URL: jdbc:postgresql://oltp-db:5432/${OLTP_DB}
       FLYWAY_USER: ${DB_USER}
       FLYWAY_PASSWORD: ${DB_PASSWORD}
     depends_on:
@@ -54,7 +54,7 @@ services:
       - ./flyway/migrations/olap:/flyway/sql
     env_file: .env
     environment:
-      FLYWAY_URL: jdbc:postgresql://${OLAP_HOST}:${OLAP_PORT}/${OLAP_DB}
+      FLYWAY_URL: jdbc:postgresql://olap-db:5432/${OLAP_DB}
       FLYWAY_USER: ${DB_USER}
       FLYWAY_PASSWORD: ${DB_PASSWORD}
     depends_on:
@@ -80,8 +80,8 @@ services:
       replicas: 3
     env_file: .env
     environment:
-      OLTP_HOST: ${OLTP_HOST}
-      OLTP_PORT: ${OLTP_PORT}
+      OLTP_HOST: oltp-db
+      OLTP_PORT: 5432
       OLTP_DB: ${OLTP_DB}
       OLTP_USER: ${DB_USER}
       OLTP_PASSWORD: ${DB_PASSWORD}
@@ -92,8 +92,8 @@ services:
     build: ./backend-api/product-api
     env_file: .env
     environment:
-      OLTP_HOST: ${OLTP_HOST}
-      OLTP_PORT: ${OLTP_PORT}
+      OLTP_HOST: oltp-db
+      OLTP_PORT: 5432
       OLTP_DB: ${OLTP_DB}
       OLTP_USER: ${DB_USER}
       OLTP_PASSWORD: ${DB_PASSWORD}
@@ -104,8 +104,8 @@ services:
     build: ./backend-api/customer-api
     env_file: .env
     environment:
-      OLTP_HOST: ${OLTP_HOST}
-      OLTP_PORT: ${OLTP_PORT}
+      OLTP_HOST: oltp-db
+      OLTP_PORT: 5432
       OLTP_DB: ${OLTP_DB}
       OLTP_USER: ${DB_USER}
       OLTP_PASSWORD: ${DB_PASSWORD}
@@ -141,8 +141,8 @@ services:
     environment:
       MB_DB_TYPE: postgres
       MB_DB_DBNAME: ${MB_DB}
-      MB_DB_PORT: ${OLAP_PORT}
-      MB_DB_HOST: ${OLAP_HOST}
+      MB_DB_PORT: 5432
+      MB_DB_HOST: olap-db
       MB_DB_USER: ${DB_USER}
       MB_DB_PASS: ${DB_PASSWORD}
     ports:
