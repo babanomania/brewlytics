@@ -64,7 +64,9 @@ cd brewlytics
 docker-compose up --build
 ```
 
-* API: `http://localhost:8000`
+* Order API: `http://localhost:8000`
+* Product API: `http://localhost:8001`
+* Customer API: `http://localhost:8002`
 * Airflow: `http://localhost:8080`
 * Metabase: `http://localhost:3000`
 * Flyway runs automatically to provision both databases
@@ -147,7 +149,9 @@ This test suite verifies that an order flows from the API through Airflow into t
 ## Folder Structure
 ```
 .
-├── backend-api/         # FastAPI service
+├── order-api/           # Order service
+├── product-api/         # Product service
+├── customer-api/        # Customer service
 ├── airflow-pipeline/    # Airflow DAGs and config
 ├── dbt/                 # dbt seeds and models
 ├── flyway/

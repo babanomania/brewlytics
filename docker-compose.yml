@@ -69,7 +69,7 @@ services:
       - flyway-olap
 
   order-api:
-    build: ./backend-api
+    build: ./order-api
     deploy:
       replicas: 3
     environment:
@@ -82,6 +82,32 @@ services:
       - flyway-oltp
     ports:
       - "8000:8000"
+
+  product-api:
+    build: ./product-api
+    environment:
+      OLTP_HOST: oltp-db
+      OLTP_PORT: 5432
+      OLTP_DB: coffee_oltp
+      OLTP_USER: brew
+      OLTP_PASSWORD: brew
+    depends_on:
+      - flyway-oltp
+    ports:
+      - "8001:8000"
+
+  customer-api:
+    build: ./customer-api
+    environment:
+      OLTP_HOST: oltp-db
+      OLTP_PORT: 5432
+      OLTP_DB: coffee_oltp
+      OLTP_USER: brew
+      OLTP_PASSWORD: brew
+    depends_on:
+      - flyway-oltp
+    ports:
+      - "8002:8000"
 
   airflow:
     image: apache/airflow:2.6.3
