@@ -80,8 +80,6 @@ services:
       OLTP_PASSWORD: brew
     depends_on:
       - flyway-oltp
-    ports:
-      - "8000:8000"
 
   product-api:
     build: ./product-api
@@ -93,8 +91,6 @@ services:
       OLTP_PASSWORD: brew
     depends_on:
       - flyway-oltp
-    ports:
-      - "8001:8000"
 
   customer-api:
     build: ./customer-api
@@ -106,8 +102,15 @@ services:
       OLTP_PASSWORD: brew
     depends_on:
       - flyway-oltp
+
+  gateway:
+    build: ./gateway
+    depends_on:
+      - order-api
+      - product-api
+      - customer-api
     ports:
-      - "8002:8000"
+      - "8000:80"
 
   airflow:
     image: apache/airflow:2.6.3
@@ -143,5 +146,5 @@ services:
       - ./k6-loadtest:/scripts
     entrypoint: "k6 run /scripts/loadtest.js"
     depends_on:
-      - order-api
+      - gateway
 
