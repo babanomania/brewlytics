@@ -6,18 +6,15 @@ This folder contains a helper script to bootstrap example dashboards in Metabase
 
 1. Start the Brewlytics stack with `docker-compose up` and finish the Metabase
    setup wizard (create an admin user and connect the `coffee_olap` database).
-2. Run the setup script:
+2. (Optional) edit `dashboard.json` to customise the dashboard name and SQL
+   queries.
+3. Run the script:
 
 ```bash
-python metabase/setup_dashboards.py
+python metabase/dashboard_from_config.py
 ```
 
-The script uses the Metabase API to create a dashboard named **Coffee Shop
-Overview** with the following cards:
-
-- **Daily Revenue**
-- **Sales by Product**
-- **Top Customers**
-
-You can customise credentials and host via the environment variables
-`METABASE_HOST`, `METABASE_USER`, and `METABASE_PASSWORD`.
+The script reads the configuration from `dashboard.json` (or the path specified
+in the `DASHBOARD_CONFIG` environment variable) and creates the dashboard using
+the Metabase API. The environment variables `METABASE_HOST`, `METABASE_USER`,
+and `METABASE_PASSWORD` can be used to override the defaults.
