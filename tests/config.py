@@ -5,6 +5,17 @@ load_dotenv(find_dotenv())
 
 API_URL = os.getenv("API_URL", "http://localhost:8000")
 
+# Required database configuration values
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+OLTP_DB = os.getenv("OLTP_DB")
+OLAP_DB = os.getenv("OLAP_DB")
+
+if not all([DB_USER, DB_PASSWORD, OLTP_DB, OLAP_DB]):
+    raise RuntimeError(
+        "DB_USER, DB_PASSWORD, OLTP_DB and OLAP_DB must be provided in the .env file"
+    )
+
 OLTP_DSN = os.getenv(
     "OLTP_DSN",
     f"dbname={os.getenv('OLTP_DB')} "
