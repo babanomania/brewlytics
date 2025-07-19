@@ -70,3 +70,22 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_order_item_cdc
 AFTER INSERT ON order_items
 FOR EACH ROW EXECUTE PROCEDURE log_order_item_cdc();
+
+CREATE OR REPLACE FUNCTION log_order_cdc() RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO cdc_orders(payload)
+    VALUES (
+        jsonb_build_object(
+            'order_id', NEW.id,
+            'customer_id', NEW.customer_id,
+            'employee_id', NEW.employee_id,
+            'order_time', NEW.order_time
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_order_cdc
+AFTER INSERT ON orders
+FOR EACH ROW EXECUTE PROCEDURE log_order_cdc();
