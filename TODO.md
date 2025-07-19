@@ -31,7 +31,7 @@ All components must work together using Docker Compose. Prefer sensible defaults
   - [x] `POST /customers` — inserts into customers
 - [x] Use PostgreSQL client (e.g., `asyncpg` or `psycopg2`)
 - [x] Add `Dockerfile` to run FastAPI with Uvicorn
-- [ ] Add sample dummy data (orders, products, customers)
+- [x] Add sample dummy data (orders, products, customers)
 
 ---
 
