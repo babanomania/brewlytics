@@ -8,15 +8,15 @@ import psycopg2
 def etl_cdc_to_star():
     oltp = psycopg2.connect(
         host=os.environ.get('OLTP_HOST', 'oltp-db'),
-        database=os.environ.get('OLTP_DB', 'coffee_oltp'),
-        user=os.environ.get('OLTP_USER', 'brew'),
-        password=os.environ.get('OLTP_PASSWORD', 'brew'),
+        database=os.environ.get('OLTP_DB'),
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASSWORD'),
     )
     olap = psycopg2.connect(
         host=os.environ.get('OLAP_HOST', 'olap-db'),
-        database=os.environ.get('OLAP_DB', 'coffee_olap'),
-        user=os.environ.get('OLAP_USER', 'brew'),
-        password=os.environ.get('OLAP_PASSWORD', 'brew'),
+        database=os.environ.get('OLAP_DB'),
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASSWORD'),
     )
     oltp.autocommit = True
     olap.autocommit = True

@@ -123,6 +123,7 @@ services:
 
   airflow:
     image: apache/airflow:2.6.3
+    env_file: .env
     environment:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
