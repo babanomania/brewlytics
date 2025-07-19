@@ -21,6 +21,19 @@ services:
     depends_on:
       - oltp-db
 
+  dbt-oltp:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
+    volumes:
+      - ./dbt:/dbt
+    working_dir: /dbt
+    environment:
+      DBT_PROFILES_DIR: /dbt
+      DBT_PROFILE: oltp
+      DBT_TARGET: dev
+    entrypoint: ["/bin/sh", "-c", "./dbt_oltp.sh"]
+    depends_on:
+      - flyway-oltp
+
   olap-db:
     image: postgres:14
     environment:
@@ -41,6 +54,19 @@ services:
       FLYWAY_PASSWORD: brew
     depends_on:
       - olap-db
+
+  dbt-olap:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
+    volumes:
+      - ./dbt:/dbt
+    working_dir: /dbt
+    environment:
+      DBT_PROFILES_DIR: /dbt
+      DBT_PROFILE: olap
+      DBT_TARGET: dev
+    entrypoint: ["/bin/sh", "-c", "./dbt_olap.sh"]
+    depends_on:
+      - flyway-olap
 
   api:
     build: ./backend-api
@@ -91,28 +117,3 @@ services:
     depends_on:
       - api
 
-  dbt_oltp:
-    image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
-    volumes:
-      - ./dbt:/dbt
-    working_dir: /dbt
-    environment:
-      DBT_PROFILES_DIR: /dbt
-      DBT_PROFILE: oltp
-      DBT_TARGET: dev
-    entrypoint: ["/bin/sh", "-c", "./dbt_oltp.sh"]
-    depends_on:
-      - flyway-oltp
-
-  dbt_olap:
-    image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
-    volumes:
-      - ./dbt:/dbt
-    working_dir: /dbt
-    environment:
-      DBT_PROFILES_DIR: /dbt
-      DBT_PROFILE: olap
-      DBT_TARGET: dev
-    entrypoint: ["/bin/sh", "-c", "./dbt_olap.sh"]
-    depends_on:
-      - flyway-olap
