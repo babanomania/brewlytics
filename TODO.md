@@ -125,5 +125,17 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 ---
 
+## 11. Additional Features
+
+- [ ] Secure `docker-compose.yml` by moving all passwords into `.env.sample`
+- [ ] Expand load testing with variations:
+  - randomize customers and products
+  - occasionally create new customers and products during tests
+- [ ] Refactor backend into microservices for separate order, product, and customer APIs
+- [ ] Use Flyway to manage and deploy database schema changes
+- [ ] Configure `docker-compose.yml` to scale services:
+  - `order-api` runs 3 instances
+  - other API services run 1 instance
+
 Once all tasks are complete, the project should simulate a full real-time analytics pipeline from transactional input to BI visualization.
 
