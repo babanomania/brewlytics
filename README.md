@@ -129,13 +129,10 @@ Connect Metabase to the OLAP PostgreSQL database.
 1. Visit [Metabase](http://localhost:3000) and create an admin user.
 2. Add a new PostgreSQL database using host `olap-db`, port `5432`, user `brew`,
    password `brew`, and database `coffee_olap`.
-3. (Optional) run `python metabase/setup_dashboards.py` to create example
-   dashboards automatically. The script creates a **Coffee Shop Overview**
-   dashboard with:
-
-   - Daily revenue
-   - Sales by product
-   - Top customers
+3. (Optional) customise `dashboard.json` and run
+   `python metabase/dashboard_from_config.py` to create an example dashboard
+   automatically. The script reads the config file path from the
+   `DASHBOARD_CONFIG` environment variable (defaults to `dashboard.json`).
 
 You can also customise the dashboard by providing a JSON config file and
 running `python metabase/dashboard_from_config.py`. The script reads the file
