@@ -15,6 +15,9 @@ Whether you're brewing orders, piping SQL, or stirring Airflow DAGs, Brewlytics 
 * K6 load testing scripts that stress your API like a Monday morning rush
 * Metabase dashboards to show your barista who's really running the shop
 * All containerized, because who wants to install things manually in 2025?
+* dbt models transform raw data into analytics-ready tables
+* Pytest integration tests ensure the whole pipeline works
+
 
 ## Architecture Overview
 
@@ -127,20 +130,32 @@ Connect Metabase to the OLAP PostgreSQL database.
 3. (Optional) run `python metabase/setup_dashboards.py` to create example
    dashboards automatically. The script creates a **Coffee Shop Overview**
    dashboard with:
+
    - Daily revenue
    - Sales by product
    - Top customers
 
-## Folder Structure
+## Running Tests
 
+Make sure the stack is running (`docker-compose up`). In another terminal, run:
+
+```bash
+pytest tests/
+```
+
+This test suite verifies that an order flows from the API through Airflow into the OLAP database.
+## Folder Structure
 ```
 .
-├── backend-api/         # FastAPI or Express codebase
-├── flyway/migrations/oltp/  # OLTP Flyway migrations
-├── flyway/migrations/olap/  # OLAP Flyway migrations
+├── backend-api/         # FastAPI service
 ├── airflow-pipeline/    # Airflow DAGs and config
+├── dbt/                 # dbt seeds and models
+├── flyway/
+│   ├── migrations/oltp/ # OLTP Flyway migrations
+│   └── migrations/olap/ # OLAP Flyway migrations
 ├── k6-loadtest/         # K6 performance testing scripts
-├── metabase/            # BI frontend (auto-configured)
+├── metabase/            # BI setup scripts
+├── tests/               # Pytest integration tests
 └── docker-compose.yml   # The real MVP
 ```
 
