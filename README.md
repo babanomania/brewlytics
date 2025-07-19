@@ -79,6 +79,14 @@ This will insert a few extra records using the CSV files in the `dbt/seeds`
 folder. The original `backend-api/sample_data.py` script can still be used to
 generate random orders if desired.
 
+To run analytical transformations with dbt models:
+
+```bash
+docker-compose run dbt-run
+```
+
+This populates helper tables like `daily_sales` in the OLAP database.
+
 ## API Endpoints
 
 * `POST /orders`: Place an order (latte not included)

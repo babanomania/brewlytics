@@ -118,9 +118,9 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 ## 10. Stretch Goals
 
-- [ ] Add a `cdc_offset` table for multi-table tracking
-- [ ] Add dbt models for transformations (optional)
-- [ ] Add support for `DELETE` and `UPDATE` events in CDC
+- [x] Add a `cdc_offset` table for multi-table tracking
+- [x] Add dbt models for transformations (optional)
+- [x] Add support for `DELETE` and `UPDATE` events in CDC
 
 ---
 

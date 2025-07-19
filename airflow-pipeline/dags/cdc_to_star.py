@@ -23,10 +23,22 @@ def etl_cdc_to_star():
 
     src = oltp.cursor()
     dst = olap.cursor()
-    src.execute("SELECT id, payload FROM cdc_orders WHERE processed=false ORDER BY id")
+
+    # fetch last processed id from offset table
+    src.execute("SELECT last_id FROM cdc_offset WHERE table_name='cdc_orders'")
+    row = src.fetchone()
+    last_id = row[0] if row else 0
+    if row is None:
+        src.execute("INSERT INTO cdc_offset(table_name, last_id) VALUES ('cdc_orders', 0)")
+
+    src.execute("SELECT id, payload, op FROM cdc_orders WHERE id > %s ORDER BY id", (last_id,))
     rows = src.fetchall()
-    for row_id, payload in rows:
+    for row_id, payload, op in rows:
         order = payload
+        if op == 'DELETE':
+            src.execute("UPDATE cdc_orders SET processed=true WHERE id=%s", (row_id,))
+            src.execute("UPDATE cdc_offset SET last_id=%s WHERE table_name='cdc_orders'", (row_id,))
+            continue
         # dimensions
         dst.execute(
             "INSERT INTO dim_customer (customer_id) VALUES (%s) ON CONFLICT (customer_id) DO NOTHING",
@@ -69,6 +81,10 @@ def etl_cdc_to_star():
             ),
         )
         src.execute("UPDATE cdc_orders SET processed=true WHERE id=%s", (row_id,))
+        src.execute(
+            "UPDATE cdc_offset SET last_id=%s WHERE table_name='cdc_orders'",
+            (row_id,)
+        )
     src.close()
     dst.close()
     oltp.close()
