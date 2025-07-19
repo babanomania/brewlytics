@@ -14,7 +14,23 @@ OLAP_DSN = os.getenv(
 )
 
 def test_order_flow():
-    order_payload = {"customer_id": 1, "items": [{"product_id": 1, "quantity": 1}]}
+    # create a product first
+    prod_payload = {"name": "Test Coffee", "price": 3.5}
+    resp = requests.post(f"{API_URL}/products", json=prod_payload)
+    assert resp.status_code == 200
+    product_id = resp.json()["id"]
+
+    # then create a customer
+    cust_payload = {"name": "PyTest User", "email": "pytest@example.com"}
+    resp = requests.post(f"{API_URL}/customers", json=cust_payload)
+    assert resp.status_code == 200
+    customer_id = resp.json()["id"]
+
+    # finally create the order using the above entities
+    order_payload = {
+        "customer_id": customer_id,
+        "items": [{"product_id": product_id, "quantity": 1}],
+    }
     resp = requests.post(f"{API_URL}/orders", json=order_payload)
     assert resp.status_code == 200
     order_id = resp.json()["order_id"]
@@ -32,5 +48,17 @@ def test_order_flow():
 
     with psycopg2.connect(OLAP_DSN) as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT COUNT(*) FROM fact_sales WHERE order_time IS NOT NULL")
-            assert cur.fetchone()[0] > 0
+            cur.execute(
+                """
+                SELECT fs.quantity, dp.product_id, dc.customer_id
+                FROM fact_sales fs
+                JOIN dim_customer dc ON fs.customer_dim_id = dc.id
+                JOIN dim_product dp ON fs.product_dim_id = dp.id
+                WHERE dc.customer_id=%s AND dp.product_id=%s
+                ORDER BY fs.id DESC LIMIT 1
+                """,
+                (customer_id, product_id),
+            )
+            row = cur.fetchone()
+            assert row is not None
+            assert row[0] == 1
