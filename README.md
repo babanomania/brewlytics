@@ -147,9 +147,10 @@ This test suite verifies that an order flows from the API through Airflow into t
 ## Folder Structure
 ```
 .
-├── order-api/           # Order service
-├── product-api/         # Product service
-├── customer-api/        # Customer service
+├── backend-api/
+│   ├── order-api/       # Order service
+│   ├── product-api/     # Product service
+│   └── customer-api/    # Customer service
 ├── airflow-pipeline/    # Airflow DAGs and config
 ├── dbt/                 # dbt seeds and models
 ├── flyway/

@@ -69,7 +69,7 @@ services:
       - flyway-olap
 
   order-api:
-    build: ./order-api
+    build: ./backend-api/order-api
     deploy:
       replicas: 3
     environment:
@@ -82,7 +82,7 @@ services:
       - flyway-oltp
 
   product-api:
-    build: ./product-api
+    build: ./backend-api/product-api
     environment:
       OLTP_HOST: oltp-db
       OLTP_PORT: 5432
@@ -93,7 +93,7 @@ services:
       - flyway-oltp
 
   customer-api:
-    build: ./customer-api
+    build: ./backend-api/customer-api
     environment:
       OLTP_HOST: oltp-db
       OLTP_PORT: 5432
