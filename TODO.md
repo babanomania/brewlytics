@@ -130,7 +130,7 @@ All components must work together using Docker Compose. Prefer sensible defaults
 - [ ] Expand load testing with variations:
   - randomize customers and products
   - occasionally create new customers and products during tests
-- [ ] Refactor backend into microservices for separate order, product, and customer APIs
+- [x] Refactor backend into microservices for separate order, product, and customer APIs
 - [x] Use Flyway to manage and deploy database schema changes
 - [x] Configure `docker-compose.yml` to scale services:
   - `order-api` runs 3 instances

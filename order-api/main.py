@@ -1,9 +1,8 @@
 import os
 from datetime import datetime
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
 
 DB_HOST = os.environ.get('OLTP_HOST', 'oltp-db')
 DB_PORT = os.environ.get('OLTP_PORT', '5432')
@@ -14,17 +13,9 @@ DB_NAME = os.environ.get('OLTP_DB', 'coffee_oltp')
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 app = FastAPI(title="Brewlytics API")
 
-class Customer(BaseModel):
-    name: str
-    email: str
-
-class Product(BaseModel):
-    name: str
-    price: float
 
 class OrderItem(BaseModel):
     product_id: int
@@ -35,25 +26,6 @@ class Order(BaseModel):
     employee_id: int | None = None
     items: list[OrderItem]
 
-@app.post("/customers")
-def create_customer(customer: Customer):
-    with engine.begin() as conn:
-        result = conn.execute(
-            text("INSERT INTO customers(name, email) VALUES (:name, :email) RETURNING id"),
-            {"name": customer.name, "email": customer.email},
-        )
-        cid = result.scalar()
-    return {"id": cid, **customer.dict()}
-
-@app.post("/products")
-def create_product(product: Product):
-    with engine.begin() as conn:
-        result = conn.execute(
-            text("INSERT INTO products(name, price) VALUES (:name, :price) RETURNING id"),
-            product.dict(),
-        )
-        pid = result.scalar()
-    return {"id": pid, **product.dict()}
 
 @app.post("/orders")
 def create_order(order: Order):

@@ -8,16 +8,17 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
 
 ## Core Components
 
-### 1. `backend-api/` (FastAPI)
-- Provides REST endpoints:
-  - `POST /orders`
-  - `POST /products`
-  - `POST /customers`
+-### 1. Microservices (FastAPI)
+-Directories:
+  - `order-api/`
+  - `product-api/`
+  - `customer-api/`
+-Each service exposes its own endpoint set, e.g. `POST /orders` from order-api.
 - Uses PostgreSQL client (`psycopg2`)
 - On order creation, inserts into `orders` and `order_items`, and logs a JSONB payload to `cdc_orders`
 - Containerized with Uvicorn in Docker
 - Dummy data generation is pending
-- Future enhancement: break into microservices (order, customer, product)
+- Services are split into microservices (order, customer, product)
 
 ---
 
@@ -94,7 +95,7 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
 - [ ] Implement **support for `UPDATE` and `DELETE`** CDC events
 - [ ] Expand **K6 test coverage** to simulate more realistic customer behavior
 - [ ] Introduce **dbt** for OLAP transformations and post-load validation
-- [ ] Refactor backend into modular **microservices** with isolated data ownership
+- [x] Refactor backend into modular **microservices** with isolated data ownership
 - [ ] Scale services in Docker Compose (e.g., `order-api` with 3 replicas)
 
 ---
