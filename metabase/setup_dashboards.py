@@ -86,7 +86,9 @@ def main() -> None:
     host = os.environ.get("METABASE_HOST", "http://localhost:3000")
     user = os.environ.get("METABASE_USER", "admin@example.com")
     password = os.environ.get("METABASE_PASSWORD", "admin")
-    config_path = os.environ.get("DASHBOARD_CONFIG", "dashboard.json")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    default_config = os.path.join(script_dir, "dashboard.json")
+    config_path = os.environ.get("DASHBOARD_CONFIG", default_config)
 
     config = load_config(config_path)
 
