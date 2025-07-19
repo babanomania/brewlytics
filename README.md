@@ -137,6 +137,11 @@ Connect Metabase to the OLAP PostgreSQL database.
    - Sales by product
    - Top customers
 
+You can also customise the dashboard by providing a JSON config file and
+running `python metabase/dashboard_from_config.py`. The script reads the file
+path from the `DASHBOARD_CONFIG` environment variable (defaults to
+`dashboard.json`).
+
 ## Running Tests
 
 Make sure the stack is running (`docker-compose up`). In another terminal, run:
