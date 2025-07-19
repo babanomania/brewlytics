@@ -6,10 +6,20 @@ services:
       POSTGRES_USER: brew
       POSTGRES_PASSWORD: brew
       POSTGRES_DB: coffee_oltp
-    volumes:
-      - ./postgres-oltp/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
+
+  flyway-oltp:
+    image: flyway/flyway
+    command: -connectRetries=60 migrate
+    volumes:
+      - ./postgres-oltp/migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: jdbc:postgresql://oltp-db:5432/coffee_oltp
+      FLYWAY_USER: brew
+      FLYWAY_PASSWORD: brew
+    depends_on:
+      - oltp-db
 
   olap-db:
     image: postgres:14
@@ -17,10 +27,20 @@ services:
       POSTGRES_USER: brew
       POSTGRES_PASSWORD: brew
       POSTGRES_DB: coffee_olap
-    volumes:
-      - ./postgres-olap/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5433:5432"
+
+  flyway-olap:
+    image: flyway/flyway
+    command: -connectRetries=60 migrate
+    volumes:
+      - ./postgres-olap/migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: jdbc:postgresql://olap-db:5432/coffee_olap
+      FLYWAY_USER: brew
+      FLYWAY_PASSWORD: brew
+    depends_on:
+      - olap-db
 
   api:
     build: ./backend-api
@@ -31,7 +51,7 @@ services:
       OLTP_USER: brew
       OLTP_PASSWORD: brew
     depends_on:
-      - oltp-db
+      - flyway-oltp
     ports:
       - "8000:8000"
 
@@ -46,8 +66,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - oltp-db
-      - olap-db
+      - flyway-oltp
+      - flyway-olap
 
   metabase:
     image: metabase/metabase
@@ -61,7 +81,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - olap-db
+      - flyway-olap
 
   k6:
     image: grafana/k6
