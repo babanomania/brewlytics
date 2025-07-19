@@ -4,10 +4,10 @@ oltp:
     dev:
       type: postgres
       host: "{{ env_var('OLTP_HOST', 'oltp-db') }}"
-      user: "{{ env_var('DB_USER', 'brew') }}"
-      password: "{{ env_var('DB_PASSWORD', 'brew') }}"
+      user: "{{ env_var('DB_USER') }}"
+      password: "{{ env_var('DB_PASSWORD') }}"
       port: {{ env_var('OLTP_PORT', '5432') }}
-      dbname: "{{ env_var('OLTP_DB', 'coffee_oltp') }}"
+      dbname: "{{ env_var('OLTP_DB') }}"
       schema: public
 
 olap:
@@ -16,8 +16,8 @@ olap:
     dev:
       type: postgres
       host: "{{ env_var('OLAP_HOST', 'olap-db') }}"
-      user: "{{ env_var('DB_USER', 'brew') }}"
-      password: "{{ env_var('DB_PASSWORD', 'brew') }}"
+      user: "{{ env_var('DB_USER') }}"
+      password: "{{ env_var('DB_PASSWORD') }}"
       port: {{ env_var('OLAP_PORT', '5432') }}
-      dbname: "{{ env_var('OLAP_DB', 'coffee_olap') }}"
+      dbname: "{{ env_var('OLAP_DB') }}"
       schema: public

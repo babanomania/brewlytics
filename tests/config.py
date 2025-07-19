@@ -18,18 +18,18 @@ if not all([DB_USER, DB_PASSWORD, OLTP_DB, OLAP_DB]):
 
 OLTP_DSN = os.getenv(
     "OLTP_DSN",
-    f"dbname={OLTP_DB} "
-    f"user={DB_USER} "
-    f"password={DB_PASSWORD} "
+    f"dbname={os.getenv('OLTP_DB')} "
+    f"user={os.getenv('DB_USER')} "
+    f"password={os.getenv('DB_PASSWORD')} "
     f"host={os.getenv('OLTP_HOST', 'localhost')} "
     f"port={os.getenv('OLTP_PORT', '5432')}",
 )
 
 OLAP_DSN = os.getenv(
     "OLAP_DSN",
-    f"dbname={OLAP_DB} "
-    f"user={DB_USER} "
-    f"password={DB_PASSWORD} "
+    f"dbname={os.getenv('OLAP_DB')} "
+    f"user={os.getenv('DB_USER')} "
+    f"password={os.getenv('DB_PASSWORD')} "
     f"host={os.getenv('OLAP_HOST', 'localhost')} "
     f"port={os.getenv('OLAP_PORT', '5433')}",
 )
