@@ -56,6 +56,8 @@ Whether you're brewing orders, piping SQL, or stirring Airflow DAGs, Brewlytics 
 ```bash
 git clone https://github.com/babanomania/brewlytics.git
 cd brewlytics
+cp .env.sample .env
+# Review and adjust values in `.env` if needed
 ```
 
 ### Start the System

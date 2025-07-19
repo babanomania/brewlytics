@@ -115,6 +115,20 @@ export default function (data) {
   const apiUrl = __ENV.API_URL || 'http://localhost:8000';
   const headers = { 'Content-Type': 'application/json' };
 
+  if (Math.random() < 0.05) {
+    const res = http.post(`${apiUrl}/customers`, JSON.stringify(generateCustomer()), { headers });
+    if (res.status === 200) {
+      data.customerIds.push(res.json('id'));
+    }
+  }
+
+  if (Math.random() < 0.05) {
+    const res = http.post(`${apiUrl}/products`, JSON.stringify(generateProduct()), { headers });
+    if (res.status === 200) {
+      data.productIds.push(res.json('id'));
+    }
+  }
+
   const customerId = data.customerIds[randomInt(0, data.customerIds.length - 1)];
   const numItems = randomInt(1, 3); // 1-3 items
   const items = [];
