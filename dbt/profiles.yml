@@ -1,0 +1,11 @@
+brewlytics:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: oltp-db
+      user: brew
+      password: brew
+      port: 5432
+      dbname: coffee_oltp
+      schema: public

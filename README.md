@@ -68,15 +68,16 @@ If everything works, pat yourself on the back. If not, blame YAML.
 
 ### Generate Sample Data
 
-To quickly populate the OLTP database with example customers, products and
-orders run:
+Flyway provisions both databases automatically. To load additional sample
+customers and products without running the Python script, use dbt seeds:
 
 ```bash
-python backend-api/sample_data.py
+docker-compose run dbt-seed
 ```
 
-This script uses the same connection settings as the API and seeds a handful of
-random orders so the rest of the pipeline has data to work with.
+This will insert a few extra records using the CSV files in the `dbt/seeds`
+folder. The original `backend-api/sample_data.py` script can still be used to
+generate random orders if desired.
 
 ## API Endpoints
 

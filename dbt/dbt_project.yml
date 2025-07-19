@@ -1,0 +1,11 @@
+name: brewlytics_dbt
+version: '1.0'
+config-version: 2
+
+profile: brewlytics
+
+seeds:
+  brewlytics_dbt:
+    +schema: public
+    +quote_columns: false
+
