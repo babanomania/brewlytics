@@ -8,15 +8,15 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 ## 1. Project Setup
 
-- [ ] Create `.gitignore` with standard Python, Node, and Airflow exclusions
-- [ ] Create `docker-compose.yml` to orchestrate all services:
+- [x] Create `.gitignore` with standard Python, Node, and Airflow exclusions
+- [x] Create `docker-compose.yml` to orchestrate all services:
   - backend-api
   - oltp-db
   - olap-db
   - airflow
   - k6
   - metabase
-- [ ] Create `.env` file for shared environment variables (e.g., DB creds, ports)
+- [x] Create `.env` file for shared environment variables (e.g., DB creds, ports)
 
 ---
 
@@ -24,13 +24,13 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 **Directory**: `backend-api/`
 
-- [ ] Create `main.py` using FastAPI
-- [ ] Implement endpoints:
-  - [ ] `POST /orders` — inserts into orders + order_items and logs to `cdc_orders`
-  - [ ] `POST /products` — inserts into products
-  - [ ] `POST /customers` — inserts into customers
-- [ ] Use PostgreSQL client (e.g., `asyncpg` or `psycopg2`)
-- [ ] Add `Dockerfile` to run FastAPI with Uvicorn
+- [x] Create `main.py` using FastAPI
+- [x] Implement endpoints:
+  - [x] `POST /orders` — inserts into orders + order_items and logs to `cdc_orders`
+  - [x] `POST /products` — inserts into products
+  - [x] `POST /customers` — inserts into customers
+- [x] Use PostgreSQL client (e.g., `asyncpg` or `psycopg2`)
+- [x] Add `Dockerfile` to run FastAPI with Uvicorn
 - [ ] Add sample dummy data (orders, products, customers)
 
 ---
@@ -39,11 +39,11 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 **Directory**: `postgres-oltp/`
 
-- [ ] Create `init.sql` with normalized schema:
+- [x] Create `init.sql` with normalized schema:
   - customers, products, orders, order_items, employees, stores
   - cdc_orders (custom WAL-like table)
-- [ ] Add AFTER INSERT trigger on `orders` to write to `cdc_orders`
-- [ ] Insert 5–10 rows of sample data
+- [x] Add AFTER INSERT trigger on `orders` to write to `cdc_orders`
+- [x] Insert 5–10 rows of sample data
 
 ---
 
@@ -51,11 +51,11 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 **Directory**: `postgres-olap/`
 
-- [ ] Create `init.sql` with star schema:
+- [x] Create `init.sql` with star schema:
   - fact_sales
   - dim_customer, dim_product, dim_employee, dim_date, dim_store
-- [ ] Add constraints and foreign keys
-- [ ] Insert a few placeholder rows for testing
+- [x] Add constraints and foreign keys
+- [x] Insert a few placeholder rows for testing
 
 ---
 
@@ -63,13 +63,13 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 **Directory**: `airflow-pipeline/dags/`
 
-- [ ] Create a DAG file: `cdc_to_star.py`
-- [ ] DAG should:
-  - [ ] Poll `cdc_orders` for unprocessed records
-  - [ ] Parse `payload` JSON
-  - [ ] Join with product/customer tables if needed
-  - [ ] Insert into `fact_sales` in OLAP DB
-  - [ ] Mark CDC record as processed (or use last_id tracking)
+- [x] Create a DAG file: `cdc_to_star.py`
+- [x] DAG should:
+  - [x] Poll `cdc_orders` for unprocessed records
+  - [x] Parse `payload` JSON
+  - [x] Join with product/customer tables if needed
+  - [x] Insert into `fact_sales` in OLAP DB
+  - [x] Mark CDC record as processed (or use last_id tracking)
 
 ---
 
@@ -77,10 +77,10 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 **Directory**: `k6-loadtest/`
 
-- [ ] Create `load-test.js` that:
-  - [ ] Hits `POST /orders` with random payloads
-  - [ ] Simulates 10–100 virtual users
-  - [ ] Runs with Docker CLI: `docker-compose run k6`
+- [x] Create `load-test.js` that:
+  - [x] Hits `POST /orders` with random payloads
+  - [x] Simulates 10–100 virtual users
+  - [x] Runs with Docker CLI: `docker-compose run k6`
 
 ---
 
@@ -88,8 +88,8 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 **Directory**: `metabase/`
 
-- [ ] Ensure Metabase container connects to OLAP DB
-- [ ] Document login steps
+- [x] Ensure Metabase container connects to OLAP DB
+- [x] Document login steps
 - [ ] Optionally generate sample dashboards:
   - Daily revenue
   - Sales by category
@@ -99,17 +99,17 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 ## 8. Integration Tests
 
-- [ ] Add a basic test to verify that:
-  - [ ] API inserts order and logs to CDC
-  - [ ] Airflow DAG processes that record
-  - [ ] OLAP contains the expected `fact_sales` entry
+- [x] Add a basic test to verify that:
+  - [x] API inserts order and logs to CDC
+  - [x] Airflow DAG processes that record
+  - [x] OLAP contains the expected `fact_sales` entry
 
 ---
 
 ## 9. Documentation
 
-- [ ] Confirm all paths match those described in `README.md` and `agent.md`
-- [ ] Add brief instructions to `README.md` for:
+- [x] Confirm all paths match those described in `README.md` and `agent.md`
+- [x] Add brief instructions to `README.md` for:
   - Running load tests
   - Triggering Airflow manually
   - Accessing Metabase dashboards

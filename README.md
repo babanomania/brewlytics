@@ -79,6 +79,9 @@ Each order automatically gets logged into the CDC table, because data is sacred.
 * `cdc_to_star` DAG extracts new events and fills the OLAP like a shot of espresso
 * Runs every 5 minutes, just like a properly tuned espresso machine
 
+To trigger the DAG manually, open [Airflow](http://localhost:8080) and log in with
+`admin` / `admin`. Click the play button next to `cdc_to_star`.
+
 ## Load Testing with K6
 
 Want to simulate the morning rush?
@@ -94,6 +97,10 @@ K6 will bombard your API like a line of customers 2 minutes before closing.
 Use Metabase to visualize sales trends, best-selling items, and which employee is secretly upselling muffins.
 
 Connect Metabase to the OLAP PostgreSQL database. Sample dashboards include:
+
+1. Visit [Metabase](http://localhost:3000) and create an admin user.
+2. Add a new PostgreSQL database using host `olap-db`, port `5432`, user `brew`,
+   password `brew`, and database `coffee_olap`.
 
 * Daily revenue breakdown
 * Most caffeinated customers

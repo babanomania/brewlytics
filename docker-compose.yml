@@ -51,6 +51,13 @@ services:
 
   metabase:
     image: metabase/metabase
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 5432
+      MB_DB_HOST: olap-db
+      MB_DB_USER: brew
+      MB_DB_PASS: brew
     ports:
       - "3000:3000"
     depends_on:
