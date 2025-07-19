@@ -121,7 +121,6 @@ All components must work together using Docker Compose. Prefer sensible defaults
 - [ ] Add a `cdc_offset` table for multi-table tracking
 - [ ] Add dbt models for transformations (optional)
 - [ ] Add support for `DELETE` and `UPDATE` events in CDC
-- [ ] Deploy on Docker Swarm or Kubernetes
 
 ---
 
