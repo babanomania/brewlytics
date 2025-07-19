@@ -66,6 +66,18 @@ docker-compose up --build
 
 If everything works, pat yourself on the back. If not, blame YAML.
 
+### Generate Sample Data
+
+To quickly populate the OLTP database with example customers, products and
+orders run:
+
+```bash
+python backend-api/sample_data.py
+```
+
+This script uses the same connection settings as the API and seeds a handful of
+random orders so the rest of the pipeline has data to work with.
+
 ## API Endpoints
 
 * `POST /orders`: Place an order (latte not included)
