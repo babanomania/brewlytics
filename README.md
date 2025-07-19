@@ -42,6 +42,29 @@ Whether you're brewing orders, piping SQL, or stirring Airflow DAGs, Brewlytics 
 | BI Dashboard      | Metabase          |
 | Containerization  | Docker Compose    |
 
+## Data Model
+
+### OLTP Schema
+
+```mermaid
+erDiagram
+    customers ||--o{ orders : places
+    employees ||--o{ orders : handles
+    orders ||--o{ order_items : contains
+    products ||--o{ order_items : includes
+    orders }o--|| cdc_orders : logs
+```
+
+### OLAP Star Schema
+
+```mermaid
+erDiagram
+    dim_customer ||--o{ fact_sales : customer
+    dim_product ||--o{ fact_sales : product
+    dim_employee ||--o{ fact_sales : employee
+    dim_date ||--o{ fact_sales : date
+```
+
 
 ## Quick Start
 
@@ -72,6 +95,21 @@ docker-compose up --build
 * Flyway runs automatically to provision both databases
 
 If everything works, pat yourself on the back. If not, blame YAML.
+
+### Environment Variables
+
+All services read their database credentials from the `.env` file. The most
+important settings are:
+
+```text
+DB_USER=brew
+DB_PASSWORD=brew
+OLTP_DB=coffee_oltp
+OLAP_DB=coffee_olap
+```
+
+These variables are passed to Flyway, Airflow, dbt and the integration tests.
+Customize them in `.env` if you need different credentials.
 
 ### Generate Sample Data
 
