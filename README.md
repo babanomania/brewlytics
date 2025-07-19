@@ -64,9 +64,7 @@ cd brewlytics
 docker-compose up --build
 ```
 
-* Order API: `http://localhost:8000`
-* Product API: `http://localhost:8001`
-* Customer API: `http://localhost:8002`
+* API Gateway: `http://localhost:8000`
 * Airflow: `http://localhost:8080`
 * Metabase: `http://localhost:3000`
 * Flyway runs automatically to provision both databases
