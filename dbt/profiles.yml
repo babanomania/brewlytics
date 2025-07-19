@@ -1,4 +1,4 @@
-brewlytics:
+oltp:
   target: dev
   outputs:
     dev:
@@ -9,7 +9,11 @@ brewlytics:
       port: 5432
       dbname: coffee_oltp
       schema: public
-    olap:
+
+olap:
+  target: dev
+  outputs:
+    dev:
       type: postgres
       host: olap-db
       user: brew
