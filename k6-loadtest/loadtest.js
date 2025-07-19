@@ -11,14 +11,69 @@ export const options = {
   ],
 };
 
-// Generate a simple random string
-function randomString(length) {
-  const chars = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return result;
+function getRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const productBaseNames = [
+  'Espresso',
+  'Latte',
+  'Cappuccino',
+  'Flat White',
+  'Mocha',
+  'Cold Brew',
+  'Chai Latte',
+  'Americano',
+  'Cortado',
+  'Macchiato',
+];
+
+const productSizes = ['Small', 'Medium', 'Large'];
+
+function generateProduct() {
+  const size = getRandom(productSizes);
+  const base = getRandom(productBaseNames);
+  const price = +(Math.random() * 5 + 2).toFixed(2); // 2-7 range
+  return { name: `${size} ${base}`, price };
+}
+
+const firstNames = [
+  'Alice',
+  'Bob',
+  'Priya',
+  'John',
+  'Maria',
+  'Wei',
+  'Ahmed',
+  'Olivia',
+  'Carlos',
+  'Nina',
+];
+
+const lastNames = [
+  'Smith',
+  'Patel',
+  'Garcia',
+  'Jones',
+  'Khan',
+  'Kim',
+  'Chen',
+  'Brown',
+  'Singh',
+  'Davis',
+];
+
+function generateCustomer() {
+  const first = getRandom(firstNames);
+  const last = getRandom(lastNames);
+  return {
+    name: `${first} ${last}`,
+    email: `${first.toLowerCase()}.${last.toLowerCase()}@example.com`,
+  };
 }
 
 export function setup() {
@@ -26,26 +81,30 @@ export function setup() {
   const headers = { 'Content-Type': 'application/json' };
 
   const customerIds = [];
-  for (let i = 0; i < 10; i++) {
-    const payload = {
-      name: `User_${randomString(5)}`,
-      email: `${randomString(5)}@example.com`,
-    };
+  const usedEmails = new Set();
+  while (customerIds.length < 10) {
+    const payload = generateCustomer();
+    if (usedEmails.has(payload.email)) {
+      continue;
+    }
     const res = http.post(`${apiUrl}/customers`, JSON.stringify(payload), { headers });
     if (res.status === 200) {
       customerIds.push(res.json('id'));
+      usedEmails.add(payload.email);
     }
   }
 
   const productIds = [];
-  for (let i = 0; i < 10; i++) {
-    const payload = {
-      name: `Prod_${randomString(5)}`,
-      price: Math.floor(Math.random() * 10) + 1,
-    };
+  const usedProductNames = new Set();
+  while (productIds.length < 10) {
+    const payload = generateProduct();
+    if (usedProductNames.has(payload.name)) {
+      continue;
+    }
     const res = http.post(`${apiUrl}/products`, JSON.stringify(payload), { headers });
     if (res.status === 200) {
       productIds.push(res.json('id'));
+      usedProductNames.add(payload.name);
     }
   }
 
@@ -56,12 +115,12 @@ export default function (data) {
   const apiUrl = __ENV.API_URL || 'http://localhost:8000';
   const headers = { 'Content-Type': 'application/json' };
 
-  const customerId = data.customerIds[Math.floor(Math.random() * data.customerIds.length)];
-  const numItems = Math.floor(Math.random() * 3) + 1; // 1-3 items
+  const customerId = data.customerIds[randomInt(0, data.customerIds.length - 1)];
+  const numItems = randomInt(1, 3); // 1-3 items
   const items = [];
   for (let i = 0; i < numItems; i++) {
-    const productId = data.productIds[Math.floor(Math.random() * data.productIds.length)];
-    const quantity = Math.floor(Math.random() * 5) + 1; // 1-5 quantity
+    const productId = data.productIds[randomInt(0, data.productIds.length - 1)];
+    const quantity = randomInt(1, 5); // 1-5 quantity
     items.push({ product_id: productId, quantity });
   }
 
