@@ -13,7 +13,7 @@ services:
     image: flyway/flyway
     command: -connectRetries=60 migrate
     volumes:
-      - ./postgres-oltp/migrations:/flyway/sql
+      - ./flyway/migrations/oltp:/flyway/sql
     environment:
       FLYWAY_URL: jdbc:postgresql://oltp-db:5432/coffee_oltp
       FLYWAY_USER: brew
@@ -34,7 +34,7 @@ services:
     image: flyway/flyway
     command: -connectRetries=60 migrate
     volumes:
-      - ./postgres-olap/migrations:/flyway/sql
+      - ./flyway/migrations/olap:/flyway/sql
     environment:
       FLYWAY_URL: jdbc:postgresql://olap-db:5432/coffee_olap
       FLYWAY_USER: brew

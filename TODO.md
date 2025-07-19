@@ -37,7 +37,7 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 ## 3. OLTP PostgreSQL
 
-**Directory**: `postgres-oltp/`
+**Directory**: `flyway/migrations/oltp/`
 
 - [x] Create `init.sql` with normalized schema:
   - customers, products, orders, order_items, employees, stores
@@ -49,7 +49,7 @@ All components must work together using Docker Compose. Prefer sensible defaults
 
 ## 4. OLAP PostgreSQL (Star Schema)
 
-**Directory**: `postgres-olap/`
+**Directory**: `flyway/migrations/olap/`
 
 - [x] Create `init.sql` with star schema:
   - fact_sales

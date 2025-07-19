@@ -21,7 +21,7 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
 
 ---
 
-### 2. `postgres-oltp/`
+### 2. `flyway/migrations/oltp/`
 - Standard normalized schema includes:
   - `orders`, `order_items`, `products`, `customers`, `employees`, `stores`
 - CDC implementation:
@@ -40,7 +40,7 @@ Brewlytics simulates a real-time analytics pipeline for a coffee shop. Users pla
 
 ---
 
-### 4. `postgres-olap/`
+### 4. `flyway/migrations/olap/`
 - Implements a simplified star schema:
   - `fact_sales`
   - Dimensions: `dim_customer`, `dim_product`, `dim_employee`, `dim_date`, `dim_store`
