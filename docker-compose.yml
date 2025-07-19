@@ -1,0 +1,65 @@
+version: '3.9'
+services:
+  oltp-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: brew
+      POSTGRES_PASSWORD: brew
+      POSTGRES_DB: coffee_oltp
+    volumes:
+      - ./postgres-oltp/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  olap-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: brew
+      POSTGRES_PASSWORD: brew
+      POSTGRES_DB: coffee_olap
+    volumes:
+      - ./postgres-olap/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+
+  api:
+    build: ./backend-api
+    environment:
+      OLTP_HOST: oltp-db
+      OLTP_PORT: 5432
+      OLTP_DB: coffee_oltp
+      OLTP_USER: brew
+      OLTP_PASSWORD: brew
+    depends_on:
+      - oltp-db
+    ports:
+      - "8000:8000"
+
+  airflow:
+    image: apache/airflow:2.6.3
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    volumes:
+      - ./airflow-pipeline/dags:/opt/airflow/dags
+    command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com && airflow scheduler & airflow webserver"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - oltp-db
+      - olap-db
+
+  metabase:
+    image: metabase/metabase
+    ports:
+      - "3000:3000"
+    depends_on:
+      - olap-db
+
+  k6:
+    image: grafana/k6
+    volumes:
+      - ./k6-loadtest:/scripts
+    entrypoint: "k6 run /scripts/loadtest.js"
+    depends_on:
+      - api
