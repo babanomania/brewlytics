@@ -90,3 +90,14 @@ services:
     entrypoint: "k6 run /scripts/loadtest.js"
     depends_on:
       - api
+
+  dbt-seed:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
+    volumes:
+      - ./dbt:/dbt
+    working_dir: /dbt
+    environment:
+      DBT_PROFILES_DIR: /dbt
+    entrypoint: ["/bin/sh", "-c", "./seed.sh"]
+    depends_on:
+      - flyway-oltp
