@@ -62,6 +62,24 @@ services:
       retries: 5
       start_period: 5s
 
+  metabase-db:
+    image: postgres:14
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${MB_DB}
+    ports:
+      - "5434:5432"
+    volumes:
+      - metabase-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
   flyway-olap:
     image: flyway/flyway
     command: -connectRetries=60 migrate
@@ -158,7 +176,7 @@ services:
       MB_DB_TYPE: postgres
       MB_DB_DBNAME: ${MB_DB}
       MB_DB_PORT: 5432
-      MB_DB_HOST: olap-db
+      MB_DB_HOST: metabase-db
       MB_DB_USER: ${DB_USER}
       MB_DB_PASS: ${DB_PASSWORD}
     ports:
@@ -167,6 +185,7 @@ services:
       - metabase-data:/metabase-data
     depends_on:
       - flyway-olap
+      - metabase-db
 
   k6:
     image: grafana/k6
@@ -185,4 +204,5 @@ volumes:
   oltp-data:
   olap-data:
   metabase-data:
+  metabase-db-data:
 

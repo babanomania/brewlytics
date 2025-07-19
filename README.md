@@ -88,13 +88,12 @@ cp .env.sample .env
 ```bash
 docker-compose up --build
 ```
-The Postgres and Metabase containers store their data in named volumes, so your
-databases survive `docker-compose down`.
+All Postgres containers (oltp-db, olap-db and metabase-db) store their data in named volumes, so your databases survive `docker-compose down`.
 
 * API Gateway: `http://localhost:8000`
 * Airflow: `http://localhost:8080`
 * Metabase: `http://localhost:3000`
-* Flyway runs automatically to provision both databases
+* Flyway runs automatically to provision all databases
 
 If everything works, pat yourself on the back. If not, blame YAML.
 
@@ -108,6 +107,7 @@ DB_USER=brew
 DB_PASSWORD=brew
 OLTP_DB=coffee_oltp
 OLAP_DB=coffee_olap
+MB_DB=metabase
 ```
 
 These variables are passed to Flyway, Airflow, dbt and the integration tests.
