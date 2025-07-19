@@ -4,25 +4,17 @@ CREATE TABLE customers (
     name TEXT NOT NULL,
     email TEXT NOT NULL
 );
-INSERT INTO customers(name, email) VALUES
-    ('Alice', 'alice@example.com'),
-    ('Bob', 'bob@example.com');
 
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     price NUMERIC NOT NULL
 );
-INSERT INTO products(name, price) VALUES
-    ('Espresso', 3.00),
-    ('Latte', 4.50),
-    ('Croissant', 2.50);
 
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL
 );
-INSERT INTO employees(name) VALUES ('System');
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
