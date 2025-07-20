@@ -109,7 +109,10 @@ DB_USER=brew
 DB_PASSWORD=brew
 OLTP_DB=coffee_oltp
 OLAP_DB=coffee_olap
-MB_DB=metabase
+METABASE_DB=metabase
+AIRFLOW_DB=airflow
+AIRFLOW_USER=admin
+AIRFLOW_PASSWORD=admin
 ```
 
 These variables are passed to Flyway, Airflow, dbt and the integration tests.

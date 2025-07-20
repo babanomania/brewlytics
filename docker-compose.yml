@@ -210,7 +210,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${MB_DB}
+      POSTGRES_DB: ${METABASE_DB}
     ports:
       - "5434:5432"
     volumes:
@@ -227,7 +227,7 @@ services:
     env_file: .env
     environment:
       MB_DB_TYPE: postgres
-      MB_DB_DBNAME: ${MB_DB}
+      MB_DB_DBNAME: ${METABASE_DB}
       MB_DB_PORT: 5432
       MB_DB_HOST: metabase-db
       MB_DB_USER: ${DB_USER}
