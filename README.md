@@ -79,6 +79,15 @@ Below is a sample Metabase dashboard visualizing OLAP insights:
 
 ### OLTP Schema
 
+Brewlytics begins with a small transactional schema used by the API. The
+`customers`, `products` and `employees` tables hold master data. The `orders`
+table records each purchase and links back to the customer who placed it and the
+employee who took it. Individual line items live in `order_items`, which joins
+an order to the products that were sold. Every change is written to
+`cdc_orders` as a JSON payload so that downstream processes can replicate the
+activity. A separate `cdc_offset` table (not shown) tracks which CDC rows have
+already been processed.
+
 ```mermaid
 erDiagram
     customers ||--o{ orders : places
@@ -90,12 +99,27 @@ erDiagram
 
 ### OLAP Star Schema
 
+The warehouse uses a star schema for fast analytical queries. Dimension tables
+(`dim_customer`, `dim_product`, `dim_employee` and `dim_date`) store descriptive
+attributes. Facts capture measurable events:
+
+* **fact_sales** – one row per product sold in an order
+* **fact_inventory** – tracks daily product inventory movement
+* **fact_payments** – records payments made by customers
+
+Each fact table links back to the relevant dimensions so BI tools can slice and
+dice data by customer, product, employee or date.
+
 ```mermaid
 erDiagram
     dim_customer ||--o{ fact_sales : customer
     dim_product ||--o{ fact_sales : product
     dim_employee ||--o{ fact_sales : employee
     dim_date ||--o{ fact_sales : date
+    dim_product ||--o{ fact_inventory : product
+    dim_date ||--o{ fact_inventory : date
+    dim_customer ||--o{ fact_payments : customer
+    dim_date ||--o{ fact_payments : date
 ```
 
 ## Quick Start
