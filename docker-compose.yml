@@ -148,12 +148,31 @@ services:
     ports:
       - "8000:80"
 
+  airflow-db:
+    image: postgres:14
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${AIRFLOW_DB}
+    ports:
+      - "5435:5432"
+    volumes:
+      - airflow-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
   airflow:
     image: apache/airflow:2.6.3
     env_file: .env
     environment:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@airflow-db:5432/${AIRFLOW_DB}
     volumes:
       - ./airflow-pipeline/dags:/opt/airflow/dags
       - airflow-data:/opt/airflow
@@ -161,6 +180,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      - airflow-db
       - flyway-oltp
       - flyway-olap
 
@@ -219,3 +239,4 @@ volumes:
   metabase-data:
   metabase-db-data:
   airflow-data:
+  airflow-db-data:
