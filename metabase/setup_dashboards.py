@@ -52,8 +52,13 @@ def create_dashboard(session: requests.Session, host: str, name: str) -> int:
 def create_card(session: requests.Session, host: str, db_id: int, card: Dict[str, Any]) -> int:
     payload = {
         "name": card["name"],
-        "dataset_query": {"database": db_id, "native": {"query": card["query"]}},
+        "dataset_query": {
+            "database": db_id,
+            "native": {"query": card["query"], "template-tags": {}},
+            "type": "native",
+        },
         "display": "table",
+        "visualization_settings": {},
     }
     resp = session.post(f"{host}/api/card", json=payload)
     try:
@@ -65,8 +70,16 @@ def create_card(session: requests.Session, host: str, db_id: int, card: Dict[str
 
 
 def add_card(session: requests.Session, host: str, dashboard_id: int, card_id: int, col: int) -> None:
-    payload = {"cardId": card_id, "sizeX": 4, "sizeY": 4, "col": col, "row": 0}
-    resp = session.post(f"{host}/api/dashboard/{dashboard_id}/cards", json=payload)
+    payload = {
+        "cardId": card_id,
+        "dashboardId": dashboard_id,
+        "sizeX": 4,
+        "sizeY": 4,
+        "col": col,
+        "row": 0,
+        "parameter_mappings": [],
+    }
+    resp = session.post(f"{host}/api/dashboard/{dashboard_id}/dashcards", json=payload)
     try:
         resp.raise_for_status()
     except requests.HTTPError as exc:
