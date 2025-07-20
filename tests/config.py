@@ -3,7 +3,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
-API_URL = os.getenv("API_URL", "http://localhost:8000")
+API_URL = os.getenv("API_URL", "http://gateway")
 
 # Required database configuration values
 DB_USER = os.getenv("DB_USER")
