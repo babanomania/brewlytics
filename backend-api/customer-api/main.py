@@ -20,7 +20,7 @@ class Customer(BaseModel):
     email: str
 
 
-@app.post("/customers")
+@app.post("/customers/new")
 def create_customer(customer: Customer):
     with engine.begin() as conn:
         result = conn.execute(

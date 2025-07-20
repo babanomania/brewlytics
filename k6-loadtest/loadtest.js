@@ -87,7 +87,7 @@ export function setup() {
     if (usedEmails.has(payload.email)) {
       continue;
     }
-    const res = http.post(`${apiUrl}/customers`, JSON.stringify(payload), { headers });
+    const res = http.post(`${apiUrl}/customers/new`, JSON.stringify(payload), { headers });
     if (res.status === 200) {
       customerIds.push(res.json('id'));
       usedEmails.add(payload.email);
@@ -101,7 +101,7 @@ export function setup() {
     if (usedProductNames.has(payload.name)) {
       continue;
     }
-    const res = http.post(`${apiUrl}/products`, JSON.stringify(payload), { headers });
+    const res = http.post(`${apiUrl}/products/new`, JSON.stringify(payload), { headers });
     if (res.status === 200) {
       productIds.push(res.json('id'));
       usedProductNames.add(payload.name);
@@ -116,14 +116,14 @@ export default function (data) {
   const headers = { 'Content-Type': 'application/json' };
 
   if (Math.random() < 0.05) {
-    const res = http.post(`${apiUrl}/customers`, JSON.stringify(generateCustomer()), { headers });
+    const res = http.post(`${apiUrl}/customers/new`, JSON.stringify(generateCustomer()), { headers });
     if (res.status === 200) {
       data.customerIds.push(res.json('id'));
     }
   }
 
   if (Math.random() < 0.05) {
-    const res = http.post(`${apiUrl}/products`, JSON.stringify(generateProduct()), { headers });
+    const res = http.post(`${apiUrl}/products/new`, JSON.stringify(generateProduct()), { headers });
     if (res.status === 200) {
       data.productIds.push(res.json('id'));
     }
@@ -139,7 +139,7 @@ export default function (data) {
   }
 
   const payload = JSON.stringify({ customer_id: customerId, items });
-  const res = http.post(`${apiUrl}/orders`, payload, { headers });
+  const res = http.post(`${apiUrl}/orders/new`, payload, { headers });
 
   const success = check(res, {
     'status is 200': (r) => r.status === 200,
