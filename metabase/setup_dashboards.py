@@ -82,7 +82,7 @@ def add_card(session: requests.Session, host: str, dashboard_id: int, card_id: i
             }
         ]
     }
-    print(payload)
+    
     resp = session.put(f"{host}/api/dashboard/{dashboard_id}/cards", json=payload)
     try:
         resp.raise_for_status()
