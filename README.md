@@ -6,6 +6,40 @@ Brewlytics is a full-stack data engineering playground disguised as a coffee sho
 
 Whether you're brewing orders, piping SQL, or stirring Airflow DAGs, Brewlytics keeps your data hot and dashboards even hotter.
 
+## Project Purpose and Business Intelligence
+
+The goal of Brewlytics is to simulate the creation of a full-fledged Business Intelligence (BI) warehouse for a modern coffee shop. While the orders, products, and employees may be fictional, the underlying architecture and data workflows mirror those used in real-world retail and food service analytics.
+
+### Why Business Intelligence?
+
+A typical coffee shop handles thousands of transactions, customer interactions, and inventory changes daily. BI helps convert that raw operational data into actionable insights such as:
+
+* Identifying peak hours and staffing accordingly
+* Highlighting best-selling items or underperforming products
+* Tracking sales trends by day, employee, or customer segment
+* Detecting operational bottlenecks or anomalies in ordering patterns
+
+### Why a Data Warehouse?
+
+Operational (OLTP) databases are optimized for transactions — fast reads and writes. But answering complex analytical questions (e.g., "How did latte sales trend over the past 6 weeks by employee?") requires joining large datasets across time, dimensions, and measures. A data warehouse (OLAP) separates analytical workloads, allowing fast, clean reporting.
+
+### How OLAP Star Schema Helps
+
+Brewlytics transforms raw CDC logs from the transactional system into a clean, analytical star schema. This includes:
+
+* **Fact tables**: e.g., `fact_sales` contain quantitative data like revenue, quantity, and timestamps.
+* **Dimension tables**: e.g., `dim_customer`, `dim_product`, `dim_employee` provide rich context for slicing and dicing the facts.
+
+This schema enables tools like Metabase to generate dashboards that:
+
+* Easily filter and group data by dimensions (e.g., daily sales by product)
+* Run fast queries thanks to denormalized design
+* Support trend analysis, ranking, and time-series exploration
+
+Below is a sample Metabase dashboard visualizing OLAP insights:
+
+![Metabase Dashboard](dashboard_screenshot.png)
+
 ## Features
 
 * RESTful API to simulate the life of a bustling coffee shop
@@ -18,7 +52,6 @@ Whether you're brewing orders, piping SQL, or stirring Airflow DAGs, Brewlytics 
 * dbt models transform raw data into analytics-ready tables
 * Pytest integration tests ensure the whole pipeline works
 
-
 ## Architecture Overview
 
 1. **OLTP**: Orders go into a transactional database (and occasionally, into chaos)
@@ -30,17 +63,17 @@ Whether you're brewing orders, piping SQL, or stirring Airflow DAGs, Brewlytics 
 
 ## Technology Stack
 
-| Layer             | Tool/Service      |
-| ----------------- | ----------------- |
-| API               | FastAPI / Express |
-| OLTP DB           | PostgreSQL        |
-| ETL Orchestration | Apache Airflow    |
-| OLAP Warehouse    | PostgreSQL        |
-| Schema Migrations | Flyway            |
-| Data Transformations | dbt            |
-| Load Testing      | K6                |
-| BI Dashboard      | Metabase          |
-| Containerization  | Docker Compose    |
+| Layer                | Tool/Service      |
+| -------------------- | ----------------- |
+| API                  | FastAPI / Express |
+| OLTP DB              | PostgreSQL        |
+| ETL Orchestration    | Apache Airflow    |
+| OLAP Warehouse       | PostgreSQL        |
+| Schema Migrations    | Flyway            |
+| Data Transformations | dbt               |
+| Load Testing         | K6                |
+| BI Dashboard         | Metabase          |
+| Containerization     | Docker Compose    |
 
 ## Data Model
 
@@ -65,7 +98,6 @@ erDiagram
     dim_date ||--o{ fact_sales : date
 ```
 
-
 ## Quick Start
 
 ### Prerequisites
@@ -80,29 +112,30 @@ erDiagram
 git clone https://github.com/babanomania/brewlytics.git
 cd brewlytics
 cp .env.sample .env
-# Review and adjust values in `.env` if needed. It now contains credentials for
-# Metabase and Airflow users that are used during setup.
 ```
+
+Update the `.env` file with the following variables for Metabase:
+
+```env
+METABASE_USER=admin@brewlytics.local
+METABASE_PASSWORD=admin123
+```
+
+These credentials will be used to log in via the Metabase API and automate dashboard creation.
 
 ### Start the System
 
 ```bash
 docker-compose up --build
 ```
-All Postgres containers (oltp-db, olap-db and metabase-db) store their data in named volumes, so your databases survive `docker-compose down`.
-The `k6` load-testing container is disabled by default using a Compose profile, so it won't start automatically.
+
+All Postgres containers (oltp-db, olap-db, metabase-db) store their data in named volumes, so your databases survive `docker-compose down`. The `k6` container is disabled by default using a Compose profile.
 
 * API Gateway: `http://localhost:8000`
 * Airflow: `http://localhost:8080`
 * Metabase: `http://localhost:3000`
-* Flyway runs automatically to provision all databases
-
-If everything works, pat yourself on the back. If not, blame YAML.
 
 ### Environment Variables
-
-All services read their database credentials from the `.env` file. The most
-important settings are:
 
 ```text
 DB_USER=brew
@@ -110,108 +143,97 @@ DB_PASSWORD=brew
 OLTP_DB=coffee_oltp
 OLAP_DB=coffee_olap
 METABASE_DB=metabase
+METABASE_USER=admin@brewlytics.local
+METABASE_PASSWORD=admin123
 AIRFLOW_DB=airflow
 AIRFLOW_USER=admin
 AIRFLOW_PASSWORD=admin
 ```
 
-These variables are passed to Flyway, Airflow, dbt and the integration tests.
-Customize them in `.env` if you need different credentials.
-
 ### Generate Sample Data
-
-Flyway provisions both databases automatically. To load additional sample
-customers and products, use dbt seeds:
 
 ```bash
 docker-compose run dbt_oltp
 ```
 
-This inserts a few extra records into the OLTP database using the CSV files in
-the `dbt/seeds` folder.
-
-To run analytical transformations with dbt models:
-
 ```bash
 docker-compose run dbt_olap
 ```
 
-This populates analytics tables in the OLAP database.
-
 ## API Endpoints
 
-* `POST /orders/new`: Place an order (latte not included)
-* `POST /products/new`: Add a new drink or snack
-* `POST /customers/new`: Register your most loyal caffeine addict
-* `GET /employees/active`: Fetch active employees for order assignment
-
-Each order automatically gets logged into the CDC table, because data is sacred.
+* `POST /orders/new`
+* `POST /products/new`
+* `POST /customers/new`
+* `GET /employees/active`
 
 ## Airflow DAGs
 
+* DAG name: `cdc_to_star`
 * Found in `airflow-pipeline/dags/`
-* `cdc_to_star` DAG extracts new events and fills the OLAP like a shot of espresso
-* Runs every 5 minutes, just like a properly tuned espresso machine
-
-To trigger the DAG manually, open [Airflow](http://localhost:8080) and log in with
-the credentials from `.env` (`AIRFLOW_USER` / `AIRFLOW_PASSWORD`). Click the play
-button next to `cdc_to_star`.
 
 ## Load Testing with K6
-
-Want to simulate the morning rush?
 
 ```bash
 docker-compose --profile k6 run k6
 ```
 
-K6 will bombard your API like a line of customers 2 minutes before closing.
-
 ## Dashboards
 
-Use Metabase to visualize sales trends, best-selling items, and which employee is secretly upselling muffins.
+After the initial Metabase setup wizard, complete the following:
 
-Connect Metabase to the OLAP PostgreSQL database.
+1. Login to [Metabase](http://localhost:3000) using the credentials from `.env`.
 
-1. Visit [Metabase](http://localhost:3000) and create an admin user.
-2. Add a new PostgreSQL database using host `olap-db`, port `5432`, user `brew`,
-   password `brew`, and database `coffee_olap`.
-3. (Optional) customise `metabase/dashboard.json` and run
-   `docker-compose --profile metabase-setup run --rm metabase-setup` to create an
-   example dashboard automatically. The script reads the config file path from
-   the `DASHBOARD_CONFIG` environment variable (defaults to
-   `metabase/dashboard.json`).
+2. Complete the setup wizard, skip sample data.
 
-You can also customise the dashboard by providing a JSON config file and running
-`docker-compose --profile metabase-setup run --rm metabase-setup`. The script reads
-the file path from the `DASHBOARD_CONFIG` environment variable (defaults to
-`metabase/dashboard.json`).
+3. Add a new PostgreSQL data source:
+
+   * Host: `olap-db`
+   * Port: `5432`
+   * DB Name: `coffee_olap`
+   * Username: `brew`
+   * Password: `brew`
+
+4. Once setup is complete, run the following command to auto-generate a dashboard and a few example charts:
+
+```bash
+docker-compose --profile metabase-setup run --rm metabase-setup
+```
+
+This invokes `setup_dashboards.py`, which uses the Metabase API to:
+
+* Authenticate with your Metabase instance
+* Create a dashboard
+* Create a few example charts
+* Add those charts to the dashboard
+
+The script reads `METABASE_USER`, `METABASE_PASSWORD`, and the dashboard config from `metabase/dashboard.json`.
+
+You can edit this file to change chart configurations, or extend the script for more complex automation.
 
 ## Running Tests
-
-Spin up the stack and run the tests using the dedicated profile:
 
 ```bash
 docker-compose --profile tests run --rm pytest
 ```
 
-This test suite verifies that an order flows from the API through Airflow into the OLAP database.
 ## Folder Structure
+
 ```
 .
 ├── backend-api/
-│   ├── order-api/       # Order service
-│   ├── product-api/     # Product service
-│   └── customer-api/    # Customer service
-├── airflow-pipeline/    # Airflow DAGs and config
-├── dbt/                 # dbt seeds and models
+│   ├── order-api/
+│   ├── product-api/
+│   └── customer-api/
+├── airflow-pipeline/
+├── dbt/
 ├── flyway/
-│   ├── migrations/oltp/ # OLTP Flyway migrations
-│   └── migrations/olap/ # OLAP Flyway migrations
-├── k6-loadtest/         # K6 performance testing scripts
-├── metabase/            # BI setup scripts
-├── tests/               # Pytest integration tests
-└── docker-compose.yml   # The real MVP
+│   ├── migrations/oltp/
+│   └── migrations/olap/
+├── k6-loadtest/
+├── metabase/
+├── tests/
+└── docker-compose.yml
 ```
 
 ## License
