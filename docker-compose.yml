@@ -280,7 +280,7 @@ services:
       OLTP_HOST: oltp-db
       OLTP_PORT: 5432
       OLAP_HOST: olap-db
-      OLAP_PORT: 5433
+      OLAP_PORT: 5432
     volumes:
       - ./tests:/tests
     working_dir: /tests

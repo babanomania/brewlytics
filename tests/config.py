@@ -21,8 +21,8 @@ OLTP_DSN = os.getenv(
     f"dbname={os.getenv('OLTP_DB')} "
     f"user={os.getenv('DB_USER')} "
     f"password={os.getenv('DB_PASSWORD')} "
-    f"host={os.getenv('OLTP_HOST', 'localhost')} "
-    f"port={os.getenv('OLTP_PORT', '5432')}",
+    f"host={os.getenv('OLTP_HOST', 'oltp-db')} "
+    f"port={os.getenv('OLTP_PORT', 5432)}",
 )
 
 OLAP_DSN = os.getenv(
@@ -30,6 +30,6 @@ OLAP_DSN = os.getenv(
     f"dbname={os.getenv('OLAP_DB')} "
     f"user={os.getenv('DB_USER')} "
     f"password={os.getenv('DB_PASSWORD')} "
-    f"host={os.getenv('OLAP_HOST', 'localhost')} "
-    f"port={os.getenv('OLAP_PORT', '5433')}",
+    f"host={os.getenv('OLAP_HOST', 'olap-db')} "
+    f"port={os.getenv('OLAP_PORT', 5432)}",
 )

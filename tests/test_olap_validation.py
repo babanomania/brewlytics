@@ -5,7 +5,7 @@ from . import config
 
 
 def test_olap_fact_sales_entry(test_order, test_customer, test_product):
-    time.sleep(5)
+    time.sleep(5 * 60)  # Wait for OLAP data to be populated
     with psycopg2.connect(config.OLAP_DSN) as conn:
         with conn.cursor() as cur:
             cur.execute(
