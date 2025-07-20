@@ -15,6 +15,16 @@
       "name": "Top Customers",
       "query": "SELECT dc.name AS customer, SUM(fs.total) AS revenue FROM fact_sales fs JOIN dim_customer dc ON fs.customer_dim_id = dc.id GROUP BY dc.name ORDER BY revenue DESC LIMIT 10;",
       "position": 8
+    },
+    {
+      "name": "Inventory Sold by Product",
+      "query": "SELECT dp.product_name, SUM(fi.quantity_sold) AS total_quantity FROM fact_inventory fi JOIN dim_product dp ON fi.product_dim_id = dp.id GROUP BY dp.product_name;",
+      "position": 12
+    },
+    {
+      "name": "Payments by Method",
+      "query": "SELECT fp.payment_method, SUM(fp.payment_amount) AS total_amount FROM fact_payments fp GROUP BY fp.payment_method;",
+      "position": 16
     }
   ]
 }

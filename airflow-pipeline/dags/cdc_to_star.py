@@ -46,7 +46,7 @@ def etl_cdc_to_star():
             continue
         # rows logged from the orders table won't contain product info
         if 'product_id' not in order:
-            # still make sure basic dimensions exist
+            # basic dimensions for orders without item details
             src.execute("SELECT name, email FROM customers WHERE id=%s", (order['customer_id'],))
             cust = src.fetchone() or (None, None)
             dst.execute(
@@ -55,9 +55,11 @@ def etl_cdc_to_star():
                 VALUES (%s, %s, %s)
                 ON CONFLICT (customer_id)
                 DO UPDATE SET name=EXCLUDED.name, email=EXCLUDED.email
+                RETURNING id
                 """,
                 (order['customer_id'], cust[0], cust[1]),
             )
+            customer_dim = dst.fetchone()[0]
             src.execute("SELECT name FROM employees WHERE id=%s", (order['employee_id'],))
             emp = src.fetchone()
             dst.execute(
@@ -73,6 +75,28 @@ def etl_cdc_to_star():
                 "INSERT INTO dim_date (date) VALUES (%s::date) ON CONFLICT (date) DO NOTHING",
                 (order['order_time'],),
             )
+
+            dst.execute(
+                "SELECT id FROM dim_date WHERE date=%s::date",
+                (order['order_time'],),
+            )
+            date_dim = dst.fetchone()[0]
+
+            if 'total' in order and 'payment_method' in order:
+                dst.execute(
+                    """
+                    INSERT INTO fact_payments(customer_dim_id, order_id, payment_amount, payment_method, date_id, recorded_at)
+                    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+                    """,
+                    (
+                        customer_dim,
+                        order['order_id'],
+                        order['total'],
+                        order['payment_method'],
+                        date_dim,
+                    ),
+                )
+
             src.execute("UPDATE cdc_orders SET processed=true WHERE id=%s", (row_id,))
             src.execute(
                 "UPDATE cdc_offset SET last_id=%s WHERE table_name='cdc_orders'",
@@ -143,6 +167,36 @@ def etl_cdc_to_star():
                 order['order_time'],
             ),
         )
+
+        # inventory fact
+        src.execute(
+            "SELECT SUM(quantity) FROM order_items WHERE order_id=%s AND product_id=%s",
+            (order['order_id'], order['product_id']),
+        )
+        qty = src.fetchone()[0] or 0
+        dst.execute(
+            """
+            INSERT INTO fact_inventory(product_dim_id, quantity_sold, date_id, recorded_at)
+            VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
+            """,
+            (product_dim, qty, date_dim),
+        )
+
+        # payment fact if fields exist
+        if 'total' in order and 'payment_method' in order:
+            dst.execute(
+                """
+                INSERT INTO fact_payments(customer_dim_id, order_id, payment_amount, payment_method, date_id, recorded_at)
+                VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+                """,
+                (
+                    customer_dim,
+                    order['order_id'],
+                    order['total'],
+                    order['payment_method'],
+                    date_dim,
+                ),
+            )
         src.execute("UPDATE cdc_orders SET processed=true WHERE id=%s", (row_id,))
         src.execute(
             "UPDATE cdc_offset SET last_id=%s WHERE table_name='cdc_orders'",
