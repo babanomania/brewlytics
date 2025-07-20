@@ -25,7 +25,14 @@ def get_database_id(session: requests.Session, host: str, name: str) -> int:
     except requests.HTTPError as exc:
         print(f"Failed to fetch databases: {exc}\n{resp.text}", file=sys.stderr)
         sys.exit(1)
-    for db in resp.json():
+
+    data = resp.json()
+    databases = data.get("data") if isinstance(data, dict) else data
+    if not isinstance(databases, list):
+        print("Unexpected response format when fetching databases", file=sys.stderr)
+        sys.exit(1)
+
+    for db in databases:
         if db.get("name") == name:
             return db["id"]
     print(f"Database '{name}' not found", file=sys.stderr)
