@@ -176,6 +176,12 @@ AIRFLOW_PASSWORD=admin
 * DAG name: `cdc_to_star`
 * Found in `airflow-pipeline/dags/`
 
+The DAG runs every five minutes and moves new records from the OLTP CDC table
+into the OLAP star schema. It connects to both databases, updates dimension and
+fact tables, and keeps track of the last processed change via the
+`cdc_offset` table. This ensures that your warehouse stays in sync with the
+operational database.
+
 ## Dashboards
 
 After the initial Metabase setup wizard, complete the following:
@@ -222,11 +228,19 @@ You can edit this file to change chart configurations, or extend the script for 
 docker-compose --profile tests run --rm pytest
 ```
 
+The test suite validates API endpoints and the end-to-end ETL flow. Running the
+command above spins up the required services and executes all `pytest` tests
+found in the `tests/` directory.
+
 ## Load Testing with K6
 
 ```bash
 docker-compose --profile k6 run k6
 ```
+
+Load tests simulate heavy traffic hitting the FastAPI services. The `k6` profile
+executes `k6-loadtest/loadtest.js`, providing metrics such as requests per second
+and latency so you can gauge performance under stress.
 
 ## Folder Structure
 
@@ -241,6 +255,7 @@ docker-compose --profile k6 run k6
 ├── flyway/
 │   ├── migrations/oltp/
 │   └── migrations/olap/
+├── gateway/
 ├── k6-loadtest/
 ├── metabase/
 ├── tests/
