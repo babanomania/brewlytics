@@ -65,13 +65,14 @@ Below is a sample Metabase dashboard visualizing OLAP insights:
 
 | Layer                | Tool/Service      |
 | -------------------- | ----------------- |
-| API                  | FastAPI / Express |
+| API                  | FastAPI           |
 | OLTP DB              | PostgreSQL        |
 | ETL Orchestration    | Apache Airflow    |
 | OLAP Warehouse       | PostgreSQL        |
 | Schema Migrations    | Flyway            |
 | Data Transformations | dbt               |
 | Load Testing         | K6                |
+| Unit Testing         | pytest            |
 | BI Dashboard         | Metabase          |
 | Containerization     | Docker Compose    |
 
@@ -161,16 +162,6 @@ METABASE_DB=metabase
 AIRFLOW_DB=airflow
 AIRFLOW_USER=admin
 AIRFLOW_PASSWORD=admin
-```
-
-### Generate Sample Data
-
-```bash
-docker-compose run dbt_oltp
-```
-
-```bash
-docker-compose run dbt_olap
 ```
 
 ## API Endpoints
