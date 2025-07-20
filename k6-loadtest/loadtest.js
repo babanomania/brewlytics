@@ -77,7 +77,7 @@ function generateCustomer() {
 }
 
 export function setup() {
-  const apiUrl = __ENV.API_URL || 'http://localhost:8000';
+  const apiUrl = __ENV.API_URL || 'http://gateway';
   const headers = { 'Content-Type': 'application/json' };
 
   const customerIds = [];
@@ -112,7 +112,7 @@ export function setup() {
 }
 
 export default function (data) {
-  const apiUrl = __ENV.API_URL || 'http://localhost:8000';
+  const apiUrl = __ENV.API_URL || 'http://gateway';
   const headers = { 'Content-Type': 'application/json' };
 
   if (Math.random() < 0.05) {
