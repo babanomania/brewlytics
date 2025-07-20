@@ -107,8 +107,10 @@ export function setup() {
       usedProductNames.add(payload.name);
     }
   }
+  const employeesRes = http.get(`${apiUrl}/employees/active`);
+  const employeeIds = employeesRes.status === 200 ? employeesRes.json().map(e => e.id) : [];
 
-  return { customerIds, productIds };
+  return { customerIds, productIds, employeeIds };
 }
 
 export default function (data) {
@@ -130,6 +132,7 @@ export default function (data) {
   }
 
   const customerId = data.customerIds[randomInt(0, data.customerIds.length - 1)];
+  const employeeId = data.employeeIds[randomInt(0, data.employeeIds.length - 1)];
   const numItems = randomInt(1, 3); // 1-3 items
   const items = [];
   for (let i = 0; i < numItems; i++) {
@@ -138,7 +141,7 @@ export default function (data) {
     items.push({ product_id: productId, quantity });
   }
 
-  const payload = JSON.stringify({ customer_id: customerId, items });
+  const payload = JSON.stringify({ customer_id: customerId, employee_id: employeeId, items });
   const res = http.post(`${apiUrl}/orders/new`, payload, { headers });
 
   const success = check(res, {
