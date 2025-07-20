@@ -80,7 +80,8 @@ erDiagram
 git clone https://github.com/babanomania/brewlytics.git
 cd brewlytics
 cp .env.sample .env
-# Review and adjust values in `.env` if needed
+# Review and adjust values in `.env` if needed. It now contains credentials for
+# Metabase and Airflow users that are used during setup.
 ```
 
 ### Start the System
@@ -150,7 +151,8 @@ Each order automatically gets logged into the CDC table, because data is sacred.
 * Runs every 5 minutes, just like a properly tuned espresso machine
 
 To trigger the DAG manually, open [Airflow](http://localhost:8080) and log in with
-`admin` / `admin`. Click the play button next to `cdc_to_star`.
+the credentials from `.env` (`AIRFLOW_USER` / `AIRFLOW_PASSWORD`). Click the play
+button next to `cdc_to_star`.
 
 ## Load Testing with K6
 
@@ -172,21 +174,22 @@ Connect Metabase to the OLAP PostgreSQL database.
 2. Add a new PostgreSQL database using host `olap-db`, port `5432`, user `brew`,
    password `brew`, and database `coffee_olap`.
 3. (Optional) customise `metabase/dashboard.json` and run
-   `python metabase/setup_dashboards.py` to create an example dashboard
-   automatically. The script reads the config file path from the
-   `DASHBOARD_CONFIG` environment variable (defaults to `metabase/dashboard.json`).
+   `docker-compose --profile metabase run --rm metabase-setup` to create an
+   example dashboard automatically. The script reads the config file path from
+   the `DASHBOARD_CONFIG` environment variable (defaults to
+   `metabase/dashboard.json`).
 
-You can also customise the dashboard by providing a JSON config file and
-running `python metabase/setup_dashboards.py`. The script reads the file
-path from the `DASHBOARD_CONFIG` environment variable (defaults to
+You can also customise the dashboard by providing a JSON config file and running
+`docker-compose --profile metabase run --rm metabase-setup`. The script reads
+the file path from the `DASHBOARD_CONFIG` environment variable (defaults to
 `metabase/dashboard.json`).
 
 ## Running Tests
 
-Make sure the stack is running (`docker-compose up`). In another terminal, run:
+Spin up the stack and run the tests using the dedicated profile:
 
 ```bash
-pytest tests/
+docker-compose --profile tests run --rm pytest
 ```
 
 This test suite verifies that an order flows from the API through Airflow into the OLAP database.
