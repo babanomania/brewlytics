@@ -7,5 +7,3 @@ profile: brewlytics
 seeds:
   brewlytics_dbt:
     +quote_columns: false
-    +pre-hook:
-      - "truncate table {{ target.schema }}.order_items, {{ target.schema }}.orders, {{ this }}"
