@@ -174,13 +174,13 @@ Connect Metabase to the OLAP PostgreSQL database.
 2. Add a new PostgreSQL database using host `olap-db`, port `5432`, user `brew`,
    password `brew`, and database `coffee_olap`.
 3. (Optional) customise `metabase/dashboard.json` and run
-   `docker-compose --profile metabase run --rm metabase-setup` to create an
+   `docker-compose --profile metabase-setup run --rm metabase-setup` to create an
    example dashboard automatically. The script reads the config file path from
    the `DASHBOARD_CONFIG` environment variable (defaults to
    `metabase/dashboard.json`).
 
 You can also customise the dashboard by providing a JSON config file and running
-`docker-compose --profile metabase run --rm metabase-setup`. The script reads
+`docker-compose --profile metabase-setup run --rm metabase-setup`. The script reads
 the file path from the `DASHBOARD_CONFIG` environment variable (defaults to
 `metabase/dashboard.json`).
 

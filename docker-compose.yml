@@ -195,16 +195,17 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - airflow-db
+      airflow-db:
+        condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
-      - flyway-oltp
-      - flyway-olap
+      flyway-oltp:
+        condition: service_started
+      flyway-olap:
+        condition: service_started
 
   metabase-db:
     image: postgres:14
-    profiles:
-      - metabase
     env_file: .env
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -223,8 +224,6 @@ services:
 
   metabase:
     image: metabase/metabase
-    profiles:
-      - metabase
     env_file: .env
     environment:
       MB_DB_TYPE: postgres
@@ -244,7 +243,7 @@ services:
   metabase-setup:
     image: python:3.11
     profiles:
-      - metabase
+      - metabase-setup
     env_file: .env
     environment:
       METABASE_HOST: http://metabase:3000
