@@ -27,8 +27,8 @@ Operational (OLTP) databases are optimized for transactions — fast reads and w
 
 Brewlytics transforms raw CDC logs from the transactional system into a clean, analytical star schema. This includes:
 
-* **Fact tables**: e.g., `fact_sales` contain quantitative data like revenue, quantity, and timestamps.
-* **Dimension tables**: e.g., `dim_customer`, `dim_product`, `dim_employee` provide rich context for slicing and dicing the facts.
+* **Fact tables**: `fact_sales`, `fact_inventory`, and `fact_payments` capture sales, inventory movement, and payment details.
+* **Dimension tables**: `dim_customer`, `dim_product`, `dim_employee`, and `dim_date` provide rich context for slicing and dicing the facts.
 
 This schema enables tools like Metabase to generate dashboards that:
 
