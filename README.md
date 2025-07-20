@@ -132,7 +132,7 @@ To run analytical transformations with dbt models:
 docker-compose run dbt_olap
 ```
 
-This populates helper tables like `daily_sales` in the OLAP database.
+This populates analytics tables in the OLAP database.
 
 ## API Endpoints
 
