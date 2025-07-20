@@ -18,7 +18,7 @@
     },
     {
       "name": "Inventory Sold by Product",
-      "query": "SELECT dp.product_name, SUM(fi.quantity_sold) AS total_quantity FROM fact_inventory fi JOIN dim_product dp ON fi.product_dim_id = dp.id GROUP BY dp.product_name;",
+      "query": "SELECT dp.name as product_name, SUM(fi.quantity_sold) AS total_quantity FROM fact_inventory fi JOIN dim_product dp ON fi.product_dim_id = dp.id GROUP BY dp.name;",
       "position": 12
     },
     {
