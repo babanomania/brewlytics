@@ -27,7 +27,7 @@ class Order(BaseModel):
     items: list[OrderItem]
 
 
-@app.post("/orders")
+@app.post("/orders/new")
 def create_order(order: Order):
     with engine.begin() as conn:
         result = conn.execute(

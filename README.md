@@ -135,9 +135,9 @@ This populates helper tables like `daily_sales` in the OLAP database.
 
 ## API Endpoints
 
-* `POST /orders`: Place an order (latte not included)
-* `POST /products`: Add a new drink or snack
-* `POST /customers`: Register your most loyal caffeine addict
+* `POST /orders/new`: Place an order (latte not included)
+* `POST /products/new`: Add a new drink or snack
+* `POST /customers/new`: Register your most loyal caffeine addict
 
 Each order automatically gets logged into the CDC table, because data is sacred.
 

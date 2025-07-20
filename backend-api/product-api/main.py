@@ -19,7 +19,7 @@ class Product(BaseModel):
     name: str
     price: float
 
-@app.post("/products")
+@app.post("/products/new")
 def create_product(product: Product):
     with engine.begin() as conn:
         result = conn.execute(
