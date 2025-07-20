@@ -31,14 +31,14 @@ def _generate_product():
 @pytest.fixture
 def test_product():
     payload = _generate_product()
-    resp = requests.post(f"{config.API_URL}/products/new", json=payload)
+    resp = requests.post(f"{config.API_URL}/products/new", json=payload, headers={"Content-Type": "application/json"})
     assert resp.status_code == 200, f"Product creation failed: {resp.text}"
     return resp.json()
 
 
 @pytest.fixture
 def active_employee_id():
-    resp = requests.get(f"{config.API_URL}/employees/active")
+    resp = requests.get(f"{config.API_URL}/employees/active", headers={"Content-Type": "application/json"})
     assert resp.status_code == 200 and resp.json(), "Failed to fetch active employees"
     return resp.json()[0]["id"]
 
@@ -79,7 +79,7 @@ def _generate_customer():
 @pytest.fixture
 def test_customer():
     payload = _generate_customer()
-    resp = requests.post(f"{config.API_URL}/customers/new", json=payload)
+    resp = requests.post(f"{config.API_URL}/customers/new", json=payload, headers={"Content-Type": "application/json"})
     assert resp.status_code == 200, f"Customer creation failed: {resp.text}"
     return resp.json()
 
@@ -96,6 +96,6 @@ def test_order(test_product, test_customer, active_employee_id):
             }
         ],
     }
-    resp = requests.post(f"{config.API_URL}/orders/new", json=payload)
+    resp = requests.post(f"{config.API_URL}/orders/new", json=payload, headers={"Content-Type": "application/json"})
     assert resp.status_code == 200, f"Order creation failed: {resp.text}"
     return resp.json()["order_id"]
