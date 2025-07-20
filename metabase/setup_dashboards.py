@@ -121,7 +121,7 @@ def main() -> None:
 
     for card in config.get("cards", []):
         card_id = create_card(session, host, db_id, card)
-        add_card(session, host, dashboard_id, card_id, card.get("position", 0))
+        # add_card(session, host, dashboard_id, card_id, card.get("position", 0))
 
     print(f"Dashboard created successfully with ID {dashboard_id}")
 
