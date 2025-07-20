@@ -71,15 +71,19 @@ def create_card(session: requests.Session, host: str, db_id: int, card: Dict[str
 
 def add_card(session: requests.Session, host: str, dashboard_id: int, card_id: int, col: int) -> None:
     payload = {
-        "cardId": card_id,
-        "dashboardId": dashboard_id,
-        "sizeX": 4,
-        "sizeY": 4,
-        "col": col,
-        "row": 0,
-        "parameter_mappings": [],
+        "cards": [
+            {
+                "id": card_id,
+                "size_x": 12,
+                "size_y": 9,
+                "col": col,
+                "row": 0,
+                "parameter_mappings": [],
+            }
+        ]
     }
-    resp = session.post(f"{host}/api/dashboard/{dashboard_id}/dashcards", json=payload)
+    print(payload)
+    resp = session.put(f"{host}/api/dashboard/{dashboard_id}/cards", json=payload)
     try:
         resp.raise_for_status()
     except requests.HTTPError as exc:
@@ -121,7 +125,7 @@ def main() -> None:
 
     for card in config.get("cards", []):
         card_id = create_card(session, host, db_id, card)
-        # add_card(session, host, dashboard_id, card_id, card.get("position", 0))
+        add_card(session, host, dashboard_id, card_id, card.get("position", 0))
 
     print(f"Dashboard created successfully with ID {dashboard_id}")
 
