@@ -42,13 +42,27 @@ def etl_cdc_to_star():
         # rows logged from the orders table won't contain product info
         if 'product_id' not in order:
             # still make sure basic dimensions exist
+            src.execute("SELECT name, email FROM customers WHERE id=%s", (order['customer_id'],))
+            cust = src.fetchone() or (None, None)
             dst.execute(
-                "INSERT INTO dim_customer (customer_id) VALUES (%s) ON CONFLICT (customer_id) DO NOTHING",
-                (order['customer_id'],),
+                """
+                INSERT INTO dim_customer (customer_id, name, email)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (customer_id)
+                DO UPDATE SET name=EXCLUDED.name, email=EXCLUDED.email
+                """,
+                (order['customer_id'], cust[0], cust[1]),
             )
+            src.execute("SELECT name FROM employees WHERE id=%s", (order['employee_id'],))
+            emp = src.fetchone()
             dst.execute(
-                "INSERT INTO dim_employee (employee_id) VALUES (%s) ON CONFLICT (employee_id) DO NOTHING",
-                (order['employee_id'],),
+                """
+                INSERT INTO dim_employee (employee_id, name)
+                VALUES (%s, %s)
+                ON CONFLICT (employee_id)
+                DO UPDATE SET name=EXCLUDED.name
+                """,
+                (order['employee_id'], emp[0] if emp else None),
             )
             dst.execute(
                 "INSERT INTO dim_date (date) VALUES (%s::date) ON CONFLICT (date) DO NOTHING",
@@ -61,17 +75,31 @@ def etl_cdc_to_star():
             )
             continue
         # dimensions
+        src.execute("SELECT name, email FROM customers WHERE id=%s", (order['customer_id'],))
+        cust = src.fetchone() or (None, None)
         dst.execute(
-            "INSERT INTO dim_customer (customer_id) VALUES (%s) ON CONFLICT (customer_id) DO NOTHING",
-            (order['customer_id'],),
+            """
+            INSERT INTO dim_customer (customer_id, name, email)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (customer_id)
+            DO UPDATE SET name=EXCLUDED.name, email=EXCLUDED.email
+            """,
+            (order['customer_id'], cust[0], cust[1]),
+        )
+        src.execute("SELECT name FROM employees WHERE id=%s", (order['employee_id'],))
+        emp = src.fetchone()
+        dst.execute(
+            """
+            INSERT INTO dim_employee (employee_id, name)
+            VALUES (%s, %s)
+            ON CONFLICT (employee_id)
+            DO UPDATE SET name=EXCLUDED.name
+            """,
+            (order['employee_id'], emp[0] if emp else None),
         )
         dst.execute(
             "INSERT INTO dim_product (product_id, price) VALUES (%s, %s) ON CONFLICT (product_id) DO NOTHING",
             (order['product_id'], order['price']),
-        )
-        dst.execute(
-            "INSERT INTO dim_employee (employee_id) VALUES (%s) ON CONFLICT (employee_id) DO NOTHING",
-            (order['employee_id'],),
         )
         dst.execute(
             "INSERT INTO dim_date (date) VALUES (%s::date) ON CONFLICT (date) DO NOTHING",
