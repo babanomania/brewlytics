@@ -238,6 +238,8 @@ services:
 
   k6:
     image: grafana/k6
+    profiles:
+      - k6
     volumes:
       - ./k6-loadtest:/scripts
     entrypoint: "k6 run /scripts/loadtest.js"

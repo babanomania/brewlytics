@@ -89,6 +89,7 @@ cp .env.sample .env
 docker-compose up --build
 ```
 All Postgres containers (oltp-db, olap-db and metabase-db) store their data in named volumes, so your databases survive `docker-compose down`.
+The `k6` load-testing container is disabled by default using a Compose profile, so it won't start automatically.
 
 * API Gateway: `http://localhost:8000`
 * Airflow: `http://localhost:8080`
@@ -156,7 +157,7 @@ To trigger the DAG manually, open [Airflow](http://localhost:8080) and log in wi
 Want to simulate the morning rush?
 
 ```bash
-docker-compose run k6
+docker-compose --profile k6 run k6
 ```
 
 K6 will bombard your API like a line of customers 2 minutes before closing.
