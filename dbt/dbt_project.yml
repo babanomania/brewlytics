@@ -8,6 +8,4 @@ seeds:
   brewlytics_dbt:
     +quote_columns: false
     +pre-hook:
-      - "truncate table {{ target.schema }}.order_items"
-      - "truncate table {{ target.schema }}.orders"
-
+      - "truncate table {{ target.schema }}.order_items, {{ target.schema }}.orders"
