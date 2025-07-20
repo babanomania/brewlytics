@@ -6,4 +6,8 @@ on conflict do nothing;
 insert into {{ target.schema }}.products (name, price)
 select name, price from {{ ref('products') }}
 on conflict do nothing;
+
+insert into {{ target.schema }}.employees (name, active)
+select name, active from {{ ref('employees') }}
+on conflict do nothing;
 {% endmacro %}

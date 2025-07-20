@@ -127,6 +127,18 @@ services:
     depends_on:
       - flyway-oltp
 
+  employee-api:
+    build: ./backend-api/employee-api
+    env_file: .env
+    environment:
+      OLTP_HOST: oltp-db
+      OLTP_PORT: 5432
+      OLTP_DB: ${OLTP_DB}
+      OLTP_USER: ${DB_USER}
+      OLTP_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - flyway-oltp
+
   gateway:
     build: ./gateway
     depends_on:

@@ -16,6 +16,13 @@ def test_product():
 
 
 @pytest.fixture
+def active_employee_id():
+    resp = requests.get(f"{config.API_URL}/employees/active")
+    assert resp.status_code == 200 and resp.json(), "Failed to fetch active employees"
+    return resp.json()[0]["id"]
+
+
+@pytest.fixture
 def test_customer():
     payload = {
         "name": "PyTest User",
@@ -27,9 +34,10 @@ def test_customer():
 
 
 @pytest.fixture
-def test_order(test_product, test_customer):
+def test_order(test_product, test_customer, active_employee_id):
     payload = {
         "customer_id": test_customer["id"],
+        "employee_id": active_employee_id,
         "items": [{"product_id": test_product["id"], "quantity": 1}],
     }
     resp = requests.post(f"{config.API_URL}/orders/new", json=payload)
