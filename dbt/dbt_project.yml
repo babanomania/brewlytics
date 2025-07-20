@@ -6,6 +6,5 @@ profile: brewlytics
 
 seeds:
   brewlytics_dbt:
-    +schema: public
     +quote_columns: false
 
