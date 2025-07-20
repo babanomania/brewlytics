@@ -138,15 +138,6 @@ cd brewlytics
 cp .env.sample .env
 ```
 
-Update the `.env` file with the following variables for Metabase:
-
-```env
-METABASE_USER=admin@brewlytics.local
-METABASE_PASSWORD=admin123
-```
-
-These credentials will be used to log in via the Metabase API and automate dashboard creation.
-
 ### Start the System
 
 ```bash
@@ -167,8 +158,6 @@ DB_PASSWORD=brew
 OLTP_DB=coffee_oltp
 OLAP_DB=coffee_olap
 METABASE_DB=metabase
-METABASE_USER=admin@brewlytics.local
-METABASE_PASSWORD=admin123
 AIRFLOW_DB=airflow
 AIRFLOW_USER=admin
 AIRFLOW_PASSWORD=admin
@@ -196,12 +185,6 @@ docker-compose run dbt_olap
 * DAG name: `cdc_to_star`
 * Found in `airflow-pipeline/dags/`
 
-## Load Testing with K6
-
-```bash
-docker-compose --profile k6 run k6
-```
-
 ## Dashboards
 
 After the initial Metabase setup wizard, complete the following:
@@ -218,7 +201,14 @@ After the initial Metabase setup wizard, complete the following:
    * Username: `brew`
    * Password: `brew`
 
-4. Once setup is complete, run the following command to auto-generate a dashboard and a few example charts:
+4. Add the following environment variables and update your metabase credentails
+
+```
+METABASE_USER=<metabase-login>
+METABASE_PASSWORD=<metabase-password>
+```
+
+5. Once setup is complete, run the following command to auto-generate a dashboard and a few example charts:
 
 ```bash
 docker-compose --profile metabase-setup run --rm metabase-setup
@@ -239,6 +229,12 @@ You can edit this file to change chart configurations, or extend the script for 
 
 ```bash
 docker-compose --profile tests run --rm pytest
+```
+
+## Load Testing with K6
+
+```bash
+docker-compose --profile k6 run k6
 ```
 
 ## Folder Structure
