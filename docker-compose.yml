@@ -166,6 +166,20 @@ services:
       retries: 5
       start_period: 5s
 
+  airflow-init:
+    image: apache/airflow:2.6.3
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@airflow-db:5432/${AIRFLOW_DB}
+    volumes:
+      - ./airflow-pipeline/dags:/opt/airflow/dags
+      - airflow-data:/opt/airflow
+    entrypoint: bash -c "airflow db init && airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com"
+    depends_on:
+      - airflow-db
+
   airflow:
     image: apache/airflow:2.6.3
     env_file: .env
@@ -176,11 +190,13 @@ services:
     volumes:
       - ./airflow-pipeline/dags:/opt/airflow/dags
       - airflow-data:/opt/airflow
-    command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com && airflow scheduler & airflow webserver"
+    command: bash -c "airflow scheduler & airflow webserver"
     ports:
       - "8080:8080"
     depends_on:
       - airflow-db
+      airflow-init:
+        condition: service_completed_successfully
       - flyway-oltp
       - flyway-olap
 
