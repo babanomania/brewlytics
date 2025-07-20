@@ -39,6 +39,27 @@ def etl_cdc_to_star():
             src.execute("UPDATE cdc_orders SET processed=true WHERE id=%s", (row_id,))
             src.execute("UPDATE cdc_offset SET last_id=%s WHERE table_name='cdc_orders'", (row_id,))
             continue
+        # rows logged from the orders table won't contain product info
+        if 'product_id' not in order:
+            # still make sure basic dimensions exist
+            dst.execute(
+                "INSERT INTO dim_customer (customer_id) VALUES (%s) ON CONFLICT (customer_id) DO NOTHING",
+                (order['customer_id'],),
+            )
+            dst.execute(
+                "INSERT INTO dim_employee (employee_id) VALUES (%s) ON CONFLICT (employee_id) DO NOTHING",
+                (order['employee_id'],),
+            )
+            dst.execute(
+                "INSERT INTO dim_date (date) VALUES (%s::date) ON CONFLICT (date) DO NOTHING",
+                (order['order_time'],),
+            )
+            src.execute("UPDATE cdc_orders SET processed=true WHERE id=%s", (row_id,))
+            src.execute(
+                "UPDATE cdc_offset SET last_id=%s WHERE table_name='cdc_orders'",
+                (row_id,),
+            )
+            continue
         # dimensions
         dst.execute(
             "INSERT INTO dim_customer (customer_id) VALUES (%s) ON CONFLICT (customer_id) DO NOTHING",
